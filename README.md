@@ -39,31 +39,33 @@ RSS &= \sum_{i=1}^n(actual - expected)^2 \\
 \end{align}
 $$ 
 
-### 1. What is a more generalized name for the RSS curve up above?
+### 1. What is a more generalized name for the RSS curve above?
 
-// your answer here //
+The residual sum of squares curve above is a specific example of a cost curve. In machine learning models, the goal is to minimize the cost curve.
 
 ### 2A. Would you rather choose a $m$ value of 0.08 or 0.03 from the curve up above? 
 
-// your answer here //
+It would be better to have a value of 0.03 rather than 0.08 in the cost curve above. The reason for this is that the RSS is lower for 
 
-### 2B. Explain what it means to move along the curve in relation to the best fit line with respect to the $m$ value you chose in 2A.
+### 2B. Explain what it means to move along the curve in relation to the best fit line with respect to the $m$ value you chose in 2A. What is the slope of the above cost curve when it has reached its minimum?
 
-// your answer here //
+As m changes values from 0.00 to 0.10 the Residual Sum of Squares is changing. The higher the value of the RSS, the worse the model is performing.
 
 ![](visuals/gd.png)
 
 ### 3. Using the gradient descent visual from above, explain why the distance between steps is getting smaller.
 
-// your answer here //
+The distance between the steps is getting smaller because the slope gradually becomes less and less steep.
 
-### 4. Explain how a very small and a very large learning rate would affect the gradient descent.
+### 4. What is the purpose of a learning rate in gradient descent? Explain how a very small and a very large learning rate would affect the gradient descent.
 
-// your answer here //
+Learning rate is a number ranging from 0.0 to 1.0 that is multiplied by each step that is taken during gradient descent. If the learning rate is smaller, the step sizes will become smaller. If the learning rate is larger, the step sizes will be larger, up until the point where the learning rate is 1.0, and it is the same as moving along the gradient normally. Learning rate is present in gradient descent to help ensure that an optimal minimum on the cost curve is discovered.
 
 ---
 ## Extensions to Linear Regression
 ---
+
+In this section, you're going to be creating linear models that are more complicated than a simple linear regression. In the cells below, we are importing relevant modules that you might need later on. We also load and prepare the dataset for you.
 
 
 ```python
@@ -90,6 +92,96 @@ data.describe()
 ```
 
 
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>TV</th>
+      <th>radio</th>
+      <th>newspaper</th>
+      <th>sales</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>200.000000</td>
+      <td>200.000000</td>
+      <td>200.000000</td>
+      <td>200.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>147.042500</td>
+      <td>23.264000</td>
+      <td>30.554000</td>
+      <td>14.022500</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>85.854236</td>
+      <td>14.846809</td>
+      <td>21.778621</td>
+      <td>5.217457</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>0.700000</td>
+      <td>0.000000</td>
+      <td>0.300000</td>
+      <td>1.600000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>74.375000</td>
+      <td>9.975000</td>
+      <td>12.750000</td>
+      <td>10.375000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>149.750000</td>
+      <td>22.900000</td>
+      <td>25.750000</td>
+      <td>12.900000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>218.825000</td>
+      <td>36.525000</td>
+      <td>45.100000</td>
+      <td>17.400000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>296.400000</td>
+      <td>49.600000</td>
+      <td>114.000000</td>
+      <td>27.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
 ```python
 X = data.drop('sales', axis=1)
 y = data['sales']
@@ -101,7 +193,39 @@ y = data['sales']
 X_train , X_test, y_train, y_test = train_test_split(X, y,random_state=2019)
 ```
 
-### 1. Write a Function to calculate train and test error for different polynomial degree (1-9)? 
+
+```python
+b = np.zeros(len(y_train))
+```
+
+
+```python
+b
+```
+
+
+
+
+    array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])
+
+
+
+### 1. We'd like to add a bit of complexity to the model created in the example above, and we will do it by adding some polynomial terms. Write a Function to calculate train and test error for different polynomial degree (1-9).
+
+This function should:
+* take `poly_degree` as a parameter that will be used to create all different possible polynomial degrees starting at 1 UP TO and including poly_degree
+* as you create the PolynomialFeatures object and fit linear regression models
+* calculate the root mean square error for each level of polynomial
+* return two lists that contain the `train_errors` and `test_errors` 
+
 
 
 ```python
@@ -122,9 +246,89 @@ def cal_degree(poly_degree):
 
 
 ```python
-error_train = cal_degree(10)[0].tolist()
-error_test = cal_degree(10)[1].tolist()
+# SOLUTION
+def calc_degree(poly_degree):
+    """Calculate train and test error for different polynomial degree (1-9)"""
+    train_error = np.zeros(len(y_train))
+    test_error = np.zeros(len(y_test))
+    for i in range(1, poly_degree + 1):
+        poly = PolynomialFeatures(degree=i, interaction_only=False, include_bias=False)
+        X_poly_train = poly.fit_transform(X_train)
+        X_poly_test = poly.transform(X_test)
+        
+        lr_poly = LinearRegression()
+        lr_poly.fit(X_poly_train,y_train)
+
+        cv_train = np.sqrt(mean_squared_error(y_train, lr_poly.predict(X_poly_train)))
+        cv_test = np.sqrt(mean_squared_error(y_test, lr_poly.predict(X_poly_test)))
+
+        train_error[i-1] = cv_train
+        test_error[i-1]  = cv_test
+
+    return train_error, test_error
 ```
+
+
+```python
+# SOLUTION
+def calc_degree_2(poly_degree):
+    """Calculate train and test error for different polynomial degree (1-9)"""
+    train_error = []
+    test_error = []
+    for i in range(1, poly_degree + 1):
+        poly = PolynomialFeatures(degree=i, interaction_only=False)
+        X_poly_train = poly.fit_transform(X_train)
+        X_poly_test = poly.transform(X_test)
+        lr_poly = LinearRegression()
+        lr_poly.fit(X_poly_train,y_train)
+
+        cv_train = np.sqrt(mean_squared_error(y_train, lr_poly.predict(X_poly_train)))
+        cv_test = np.sqrt(mean_squared_error(y_test, lr_poly.predict(X_poly_test)))
+#         print(cv_train)
+        train_error.append(cv_train)
+        test_error.append(cv_test)
+
+    return train_error, test_error
+```
+
+
+```python
+error_train = calc_degree(10)[0].tolist()
+error_test = calc_degree(10)[1].tolist()
+```
+
+
+```python
+calc_degree_2(10)
+```
+
+
+
+
+    ([5.16147132339435,
+      1.633049529710119,
+      0.6544219763525787,
+      0.4923003895833528,
+      0.42636966692892925,
+      0.2552375092236587,
+      0.21455738787043777,
+      0.17677574592197967,
+      0.20526596216126342,
+      0.26914830727034605,
+      0.28892220322372025],
+     [5.343670690119708,
+      1.8399932733741966,
+      0.4317931087085349,
+      0.39091400558118194,
+      1.3972328447228304,
+      2.381671115675543,
+      4.672887984282909,
+      5.391079429485139,
+      88.12110401687424,
+      24002.511402029148,
+      177660.21087344288])
+
+
 
 #error_train = [1.6872219375656985, 0.6412867668294241, 0.4711637753473785, 0.36944896135164984, 
                 0.2410561613114944, 0.2564919445411836, 0.3165437580993593,
@@ -153,11 +357,13 @@ fig.savefig("visuals/rsme_poly.png",
             bbox_inches="tight")
 --->
 
-// your answer here //
+As we increase the polynomial features, it is going to cause our training error to decrease, which decreases the bias but increases the variance (the testing error increases). This is an example of overfitting.
 
-### 3. What method would you use to mitigate the overfitting and underfitting? 
+### 3. In general what are methods would you can use to mitigate overfitting and underfitting? Provide an example for both and explain how both of them work.
 
-// your answer here //
+Overfitting: Regularization. With regularization, more complex models are penalized. This ensures that the models are not trained to too much "noise."
+
+Underfitting: Feature engineering. By adding additional features, you enable your machine learning models to gain insights about your data.
 
 ### 4. What is the alpha in Lasso Regression? Find the optimal alpha value for Lasso Regression for the given polynomial features.
 
@@ -441,9 +647,4 @@ plt.ylabel("True positive rate")
 plt.title("ROC Curve")
 plt.legend()
 plt.tight_layout()
-```
-
-
-```python
-
 ```
