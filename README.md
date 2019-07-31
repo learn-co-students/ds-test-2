@@ -137,6 +137,22 @@ error_test = cal_degree(10)[1].tolist()
 
 ![rsme](visuals/rsme_poly.png)
 
+<!---
+fig, ax = plt.subplots(figsize=(7, 7))
+degree = list(range(1, 10 + 1))
+ax.plot(degree, error_train[0:len(degree)], "-", label="Train Error")
+ax.plot(degree, error_test[0:len(degree)], "-", label="Test Error")
+ax.set_yscale("log")
+ax.set_xlabel("Polynomial Feature Degree")
+ax.set_ylabel("Root Mean Squared Error")
+ax.legend()
+ax.set_title("Relationship Between Degree and Error")
+fig.tight_layout()
+fig.savefig("visuals/rsme_poly.png",
+            dpi=150,
+            bbox_inches="tight")
+--->
+
 // your answer here //
 
 ### 3. What method would you use to mitigate the overfitting and underfitting? 
