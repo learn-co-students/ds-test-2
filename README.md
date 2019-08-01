@@ -39,23 +39,19 @@ RSS &= \sum_{i=1}^n(actual - expected)^2 \\
 \end{align}
 $$ 
 
-### 1. What is a more generalized name for the RSS curve above?
+### 1. What is a more generalized name for the RSS curve above? How is it related to training machine learning models?
 
-The residual sum of squares curve above is a specific example of a cost curve. In machine learning models, the goal is to minimize the cost curve.
+The residual sum of squares curve above is a specific example of a cost curve. When training machine learning models, the goal is to minimize the cost curve.
 
-### 2A. Would you rather choose a $m$ value of 0.08 or 0.03 from the curve up above? 
+### 2. Would you rather choose a $m$ value of 0.08 or 0.03 from the curve up above? In your answer, also explain what it means to move along the curve in relation to the best fit line with respect to $m$. 
 
-It would be better to have a value of 0.03 rather than 0.08 in the cost curve above. The reason for this is that the RSS is lower for 
-
-### 2B. Explain what it means to move along the curve in relation to the best fit line with respect to the $m$ value you chose in 2A. What is the slope of the above cost curve when it has reached its minimum?
-
-As m changes values from 0.00 to 0.10 the Residual Sum of Squares is changing. The higher the value of the RSS, the worse the model is performing.
+It would be better to have a value of 0.03 rather than 0.08 in the cost curve above. The reason for this is that the RSS is lower for the value of 0.03. As m changes values from 0.00 to 0.10 the Residual Sum of Squares is changing. The higher the value of the RSS, the worse the model is performing.
 
 ![](visuals/gd.png)
 
-### 3. Using the gradient descent visual from above, explain why the distance between steps is getting smaller.
+### 3. Using the gradient descent visual from above, explain why the distance between each step is getting smaller as more steps occur with gradient descent.
 
-The distance between the steps is getting smaller because the slope gradually becomes less and less steep.
+The distance between the steps is getting smaller because the slope gradually becomes less and less steep as you get closer to finding the minimum.
 
 ### 4. What is the purpose of a learning rate in gradient descent? Explain how a very small and a very large learning rate would affect the gradient descent.
 
@@ -204,52 +200,11 @@ This function should:
 
 
 ```python
-def cal_degree(poly_degree):
-    '''calculate train and test error for different polynomial degree (1-9)'''
-    train_errors = None
-    test_errors = None
-    
-#       For each model with different polynomial degree:
-#       Create object for PolynomialFeatures with necessary parameters
-#       get the polynomialfeatures for training and testing
-#       Fit the LinearRegression to new Features and y_train
-#       Calculate the testing and training error (Root mean squared error)
-#       Add train and test errors to numpy arrays
-        
-    return train_errors, test_errors
-```
-
-
-```python
 # SOLUTION
 def calc_degree(poly_degree):
     """Calculate train and test error for different polynomial degree (1-9)"""
-    train_error = np.zeros(len(y_train))
-    test_error = np.zeros(len(y_test))
-    for i in range(1, poly_degree + 1):
-        poly = PolynomialFeatures(degree=i, interaction_only=False, include_bias=False)
-        X_poly_train = poly.fit_transform(X_train)
-        X_poly_test = poly.transform(X_test)
-        
-        lr_poly = LinearRegression()
-        lr_poly.fit(X_poly_train,y_train)
-
-        cv_train = np.sqrt(mean_squared_error(y_train, lr_poly.predict(X_poly_train)))
-        cv_test = np.sqrt(mean_squared_error(y_test, lr_poly.predict(X_poly_test)))
-
-        train_error[i-1] = cv_train
-        test_error[i-1]  = cv_test
-
-    return train_error, test_error
-```
-
-
-```python
-# SOLUTION
-def calc_degree_2(poly_degree):
-    """Calculate train and test error for different polynomial degree (1-9)"""
-    train_error = []
-    test_error = []
+    train_error_list = []
+    test_error_list = []
     for i in range(1, poly_degree + 1):
         poly = PolynomialFeatures(degree=i, interaction_only=False)
         X_poly_train = poly.fit_transform(X_train)
@@ -257,64 +212,38 @@ def calc_degree_2(poly_degree):
         lr_poly = LinearRegression()
         lr_poly.fit(X_poly_train,y_train)
 
-        cv_train = np.sqrt(mean_squared_error(y_train, lr_poly.predict(X_poly_train)))
-        cv_test = np.sqrt(mean_squared_error(y_test, lr_poly.predict(X_poly_test)))
-#         print(cv_train)
-        train_error.append(cv_train)
-        test_error.append(cv_test)
+        train_error = np.sqrt(mean_squared_error(y_train, lr_poly.predict(X_poly_train)))
+        test_error = np.sqrt(mean_squared_error(y_test, lr_poly.predict(X_poly_test)))
+        train_error_list.append(train_error)
+        test_error_list.append(test_error)
 
-    return train_error, test_error
+    return train_error_list, test_error_list
 ```
 
-
-```python
-error_train = calc_degree(10)[0].tolist()
-error_test = calc_degree(10)[1].tolist()
-```
-
-
-```python
-calc_degree_2(10)
-```
-
-
-
-
-    ([5.16147132339435,
-      1.633049529710119,
-      0.6544219763525787,
-      0.4923003895833528,
-      0.42636966692892925,
-      0.2552375092236587,
-      0.21455738787043777,
-      0.17677574592197967,
-      0.20526596216126342,
-      0.26914830727034605,
-      0.28892220322372025],
-     [5.343670690119708,
-      1.8399932733741966,
-      0.4317931087085349,
-      0.39091400558118194,
-      1.3972328447228304,
-      2.381671115675543,
-      4.672887984282909,
-      5.391079429485139,
-      88.12110401687424,
-      24002.511402029148,
-      177660.21087344288])
-
-
-
-#error_train = [1.6872219375656985, 0.6412867668294241, 0.4711637753473785, 0.36944896135164984, 
-                0.2410561613114944, 0.2564919445411836, 0.3165437580993593,
-                0.3903584583915307, 0.32526008157451436, 0.7955206228171482]
-#error_test = [1.6340815294866986, 0.4951157689460942, 0.4798020916835737, 0.4870596445796682,
-               0.4608682794261582, 1.198082221301244, 4.440474842230711, 
-               19.919529327003232, 129.4605767258836, 1066.1109145234598]
+#error_train = [1.633049529710119,
+ 0.6544219763525787,
+ 0.4923003895833528,
+ 0.42636966692892925,
+ 0.2552375092236587,
+ 0.21455738787043777,
+ 0.17677574592197967,
+ 0.20526596216126342,
+ 0.26914830727034605,
+ 0.28892220322372025]
+#error_test = [1.8399932733741966,
+ 0.4317931087085349,
+ 0.39091400558118194,
+ 1.3972328447228304,
+ 2.381671115675543,
+ 4.672887984282909,
+ 5.391079429485139,
+ 88.12110401687424,
+ 24002.511402029148,
+ 177660.21087344288]
 
 ### 2. What is the optimal number of degrees for our features in this model? In general, how does increasing the polynomial degree relate to the Bias/Variance tradeoff? 
 
-![rsme](visuals/rsme_poly.png)
+<img src ="visuals/rsme_poly_2.png" width = "600">
 
 <!---
 fig, ax = plt.subplots(figsize=(7, 7))
@@ -332,18 +261,20 @@ fig.savefig("visuals/rsme_poly.png",
             bbox_inches="tight")
 --->
 
-The optimal number of features in this example is 3 because there is a . As we increase the polynomial features, it is going to cause our training error to decrease, which decreases the bias but increases the variance (the testing error increases). This is an example of overfitting.
+The optimal number of features in this example is 3 because there is a . As we increase the polynomial features, it is going to cause our training error to decrease, which decreases the bias but increases the variance (the testing error increases). In other words, the more complex the model, the higher the chance of overfitting. 
 
-### 3. In general what are methods would you can use to mitigate overfitting and underfitting? Provide an example for both and explain how both of them work reduce the problems of underfitting and overfitting.
+### 3. In general what methods would you can use to reduce overfitting and underfitting? Provide an example for both and explain how each technique work to reduce the problems of underfitting and overfitting.
 
 Overfitting: Regularization. With regularization, more complex models are penalized. This ensures that the models are not trained to too much "noise."
 
 Underfitting: Feature engineering. By adding additional features, you enable your machine learning models to gain insights about your data.
 
-### 4. Use a form of regularization on polynomial data below. We've taken care to load the polynomial transformed data for you, held in X_poly_train and X_poly_test. 
+### 4. Create the function `train_regularizer` below to train a regularized model and obtain the the testing error. You can use a regularization technique of your choosing.
+
+We've taken care to load the polynomial transformed data for you, held in X_poly_train and X_poly_test. 
 
 The function should:
-* take in X_train, X_test, y_train, y_test as parameters
+* take in X_train, X_test, y_train, y_test as parameters. We are assuming that the data has already been transformed into a polynomial ^ 10
 * return the root mean square error of the predictions for the test data
 > Hint :Make sure to include all necessary preprocessing steps required when fitting a regularized model!
 
@@ -360,7 +291,7 @@ pickle.dump(X_poly_test, open("write_data/poly_test_model.pkl", "wb"))
 X_poly_train = pickle.load(open("write_data/poly_train_model.pkl", "rb"))
 X_poly_test = pickle.load(open("write_data/poly_test_model.pkl", "rb"))
 
-def train_regularizor(X_train, X_test, y_train, y_test):
+def train_regularizer(X_train, X_test, y_train, y_test):
     std = StandardScaler()
     X_train_transformed = std.fit_transform(X_poly_train)
     X_test_transformed = std.transform(X_poly_test)
@@ -481,7 +412,9 @@ print("F1: {}".format(F1))
     F1: 0.7894736842105262
 
 
-### 2. Explain how precision is different from recall and why you should consider using the F-1 score when you are evaulating your model. What is an example of when you would care more about recall than precision?
+### Explain how precision is different from recall and why you should consider using the F-1 score when you are evaulating your model.
+
+### 2.  What is an example of when you would care more about recall than precision? Make sure to include information about errors in your explanation.
 
 We would care more about recall than precision in cases where a Type II error (a False Negative) would have serious consequences. An example of this would be a medical test that determines if someone has a serious disease. A higher recall would mean that we would have a higher chance of identifying all people who ACTUALLY had the serious disease.
 
