@@ -189,34 +189,9 @@ y = data['sales']
 
 
 ```python
-# split the data into training and testing set
+# split the data into training and testing set. Do not change the random state please!
 X_train , X_test, y_train, y_test = train_test_split(X, y,random_state=2019)
 ```
-
-
-```python
-b = np.zeros(len(y_train))
-```
-
-
-```python
-b
-```
-
-
-
-
-    array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])
-
-
 
 ### 1. We'd like to add a bit of complexity to the model created in the example above, and we will do it by adding some polynomial terms. Write a Function to calculate train and test error for different polynomial degree (1-9).
 
@@ -337,7 +312,7 @@ calc_degree_2(10)
                0.4608682794261582, 1.198082221301244, 4.440474842230711, 
                19.919529327003232, 129.4605767258836, 1066.1109145234598]
 
-### 2. How does increasing polynomial degree effect Bias and Variance? 
+### 2. What is the optimal number of degrees for our features in this model? In general, how does increasing the polynomial degree relate to the Bias/Variance tradeoff? 
 
 ![rsme](visuals/rsme_poly.png)
 
@@ -357,15 +332,20 @@ fig.savefig("visuals/rsme_poly.png",
             bbox_inches="tight")
 --->
 
-As we increase the polynomial features, it is going to cause our training error to decrease, which decreases the bias but increases the variance (the testing error increases). This is an example of overfitting.
+The optimal number of features in this example is 3 because there is a . As we increase the polynomial features, it is going to cause our training error to decrease, which decreases the bias but increases the variance (the testing error increases). This is an example of overfitting.
 
-### 3. In general what are methods would you can use to mitigate overfitting and underfitting? Provide an example for both and explain how both of them work.
+### 3. In general what are methods would you can use to mitigate overfitting and underfitting? Provide an example for both and explain how both of them work reduce the problems of underfitting and overfitting.
 
 Overfitting: Regularization. With regularization, more complex models are penalized. This ensures that the models are not trained to too much "noise."
 
 Underfitting: Feature engineering. By adding additional features, you enable your machine learning models to gain insights about your data.
 
-### 4. What is the alpha in Lasso Regression? Find the optimal alpha value for Lasso Regression for the given polynomial features.
+### 4. Use a form of regularization on polynomial data below. We've taken care to load the polynomial transformed data for you, held in X_poly_train and X_poly_test. 
+
+The function should:
+* take in X_train, X_test, y_train, y_test as parameters
+* return the root mean square error of the predictions for the test data
+> Hint :Make sure to include all necessary preprocessing steps required when fitting a regularized model!
 
 <!---
 poly = PolynomialFeatures(degree=10, interaction_only=False, include_bias=False)
@@ -379,25 +359,23 @@ pickle.dump(X_poly_test, open("write_data/poly_test_model.pkl", "wb"))
 ```python
 X_poly_train = pickle.load(open("write_data/poly_train_model.pkl", "rb"))
 X_poly_test = pickle.load(open("write_data/poly_test_model.pkl", "rb"))
-size = 100
-alphas = np.linspace(0, 1, size)
 
-error = np.zeros(size)
-for i, alpha in enumerate(np.linspace(.1, 10, size)):
-    # for each alpha value between .1 and 10
-    # create a Lasso model
-    lasso = Lasso(alpha=alpha, tol=0.06)
-    # fit X_poly_train and y_train onto the Lasso model 
-    lasso.fit(X_poly_train,y_train)
-    # calculate the predictions from the Lasso model
-    y_pred = lasso.predict(X_poly_test)
-    # calculate the MSE from your predictions
-    score = mean_squared_error(y_pred, y_test)
-    # place the MSE inside of the error object
-    error[i] = score
-
-alphas[np.argmin(error)]
+def train_regularizor(X_train, X_test, y_train, y_test):
+    std = StandardScaler()
+    X_train_transformed = std.fit_transform(X_poly_train)
+    X_test_transformed = std.transform(X_poly_test)
+    lasso = Lasso()
+    lasso.fit(X_train_transformed,y_train)
+    y_pred = lasso.predict(X_test_transformed)
+    return np.sqrt(mean_squared_error(y_test,y_pred))
 ```
+
+
+
+
+    0.5151515151515152
+
+
 
 ---
 ## Introduction to Logistic Regression
@@ -487,11 +465,25 @@ plt.savefig("visuals/cnf_matrix.png",
 
 ### 1. Using the confusion matrix up above, calculate precision, recall, and F-1 score.
 
-// your answer here //
 
-### 2. Explain how precision is different from recall and why you should consider using the F-1 score when you are evaulating your model.
+```python
+precision = 30/(30+4)
+recall = 30 / (30 + 12)
+F1 = 2 * (precision * recall) / (precision + recall)
 
-// your answer here //
+print("precision: {}".format(precision))
+print("recall: {}".format(recall))
+print("F1: {}".format(F1))
+```
+
+    precision: 0.8823529411764706
+    recall: 0.7142857142857143
+    F1: 0.7894736842105262
+
+
+### 2. Explain how precision is different from recall and why you should consider using the F-1 score when you are evaulating your model. What is an example of when you would care more about recall than precision?
+
+We would care more about recall than precision in cases where a Type II error (a False Negative) would have serious consequences. An example of this would be a medical test that determines if someone has a serious disease. A higher recall would mean that we would have a higher chance of identifying all people who ACTUALLY had the serious disease.
 
 <!---
 # save preprocessed train/test split objects
@@ -550,13 +542,13 @@ plt.savefig("visuals/many_roc.png",
             bbox_inches="tight")
 --->
 
-### 3. Pick the best ROC curve and explain your choice.
+### 3. Pick the best ROC curve from this graph and explain your choice. After picking your choice, explain how the ROC curve is constructed (not in terms of code, but in terms of theory).
 
 *Note: each ROC curve represents one model, each labeled with the feature(s) inside each model*.
 
 ![many roc](visuals/many_roc.png)
 
-// your answer here //
+The best ROC curve in this graph is for the one that contains all features (the pink one). This is because it has the largest area under the curve. The ROC curve is created by obtaining the ratio of the True Positive Rate to the False Positive Rate over all thresholds of a classification model.
 
 <!---
 # sorting by 'Purchased' and then dropping the last 130 records
@@ -597,14 +589,35 @@ auc = round(roc_auc_score(y_test, y_score), 3)
 print(f"The original classifier has an area under the ROC curve of {auc}.")
 ```
 
-### 4. The model above has an accuracy score that it too good to believe. Using `y.value_counts()`, explain how `y` is affecting the accuracy score.
+    The original classifier has an accuracy score of 0.956.
+    The original classifier has an area under the ROC curve of 0.836.
+
+
+    /Users/forest.polchow/anaconda3/lib/python3.6/site-packages/sklearn/preprocessing/data.py:645: DataConversionWarning: Data with input dtype int64 were all converted to float64 by StandardScaler.
+      return self.partial_fit(X, y)
+    /Users/forest.polchow/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:13: DataConversionWarning: Data with input dtype int64 were all converted to float64 by StandardScaler.
+      del sys.path[0]
+    /Users/forest.polchow/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:14: DataConversionWarning: Data with input dtype int64 were all converted to float64 by StandardScaler.
+      
+
+
+### 4. The model above has an accuracy score that might be too good to believe. Using `y.value_counts()`, explain how `y` is affecting the accuracy score.
 
 
 ```python
-# code here
+y.value_counts()
 ```
 
-// your answer here //
+
+
+
+    0    257
+    1     13
+    Name: Purchased, dtype: int64
+
+
+
+This is a case of misbalanced classes. The positive class represents only ≈ 5% of all the data. This can result in misleading accuracy.
 
 ### 5. Update the inputs in the classification model using a technique to address the issues mentioned up above in question 4. 
 
