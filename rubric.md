@@ -27,7 +27,7 @@ Point Value: 1.25
 
 #### 3)
 
-Point Value: 1.25
+Point Value: 1
 
 1 point: mentions that the distance between each step is getting smaller because the gradient of the cost curve is become less steep
 
@@ -35,11 +35,11 @@ Point Value: 1.25
 
 #### 4)
 
-Point Value: 1.25
+Point Value: 1.5
 
 1 point: defines learning rate as a value ranging from 0.0 - 1.0 that effects the step size in gradient descent to help ensure an optimum minimum is discovered
 
-0.25 points: correctly describes the effect of large and small learning rates on step size
+0.5 points: correctly describes the effect of large and small learning rates on step size
 
 *Learning Goal(s): Define a learning rate, and its relationship to step size when performing gradient descent*  
 
@@ -90,7 +90,7 @@ Point Value: 1
 
 Point Value: 1.5
 
-0.25 points: performs standardization on the data prior to fitting the regularized regression model
+0.5 points: performs standardization on the data prior to fitting the regularized regression model
 
 0.75 points: fits model with either Lasso, Ridge or ElasticNet regression
 
@@ -186,8 +186,6 @@ Point Value: 1
 0.5 points: correctly determines whether or not the stock time series is stationary
 
 
-0.5 points:
-
  *Learning Goal(s): Create visualizations of transformed time series as a visual aid to determine if stationarity has been achieved. Use rolling statistics an a check for stationarity*
 
 #### 4)
@@ -207,4 +205,5 @@ Point Value: 1
 0.5 points: uses time series indexing to select the maximum value for a given year
 
 0.5 points: returns a dictionary with the correct year and max value data
+
  *Learning Goal(s): Perform time series indexing*
