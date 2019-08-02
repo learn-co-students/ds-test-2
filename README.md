@@ -88,6 +88,96 @@ data.describe()
 ```
 
 
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>TV</th>
+      <th>radio</th>
+      <th>newspaper</th>
+      <th>sales</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>200.000000</td>
+      <td>200.000000</td>
+      <td>200.000000</td>
+      <td>200.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>147.042500</td>
+      <td>23.264000</td>
+      <td>30.554000</td>
+      <td>14.022500</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>85.854236</td>
+      <td>14.846809</td>
+      <td>21.778621</td>
+      <td>5.217457</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>0.700000</td>
+      <td>0.000000</td>
+      <td>0.300000</td>
+      <td>1.600000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>74.375000</td>
+      <td>9.975000</td>
+      <td>12.750000</td>
+      <td>10.375000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>149.750000</td>
+      <td>22.900000</td>
+      <td>25.750000</td>
+      <td>12.900000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>218.825000</td>
+      <td>36.525000</td>
+      <td>45.100000</td>
+      <td>17.400000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>296.400000</td>
+      <td>49.600000</td>
+      <td>114.000000</td>
+      <td>27.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
 ```python
 X = data.drop('sales', axis=1)
 y = data['sales']
@@ -315,6 +405,11 @@ print("recall: {}".format(recall))
 print("F1: {}".format(F1))
 ```
 
+    precision: 0.8823529411764706
+    recall: 0.7142857142857143
+    F1: 0.7894736842105262
+
+
 ### 2.  What is a real life example of when you would care more about recall than precision? Make sure to include information about errors in your explanation.
 
 We would care more about recall than precision in cases where a Type II error (a False Negative) would have serious consequences. An example of this would be a medical test that determines if someone has a serious disease. A higher recall would mean that we would have a higher chance of identifying all people who ACTUALLY had the serious disease.
@@ -424,12 +519,33 @@ auc = round(roc_auc_score(y_test, y_score), 3)
 print(f"The original classifier has an area under the ROC curve of {auc}.")
 ```
 
+    The original classifier has an accuracy score of 0.956.
+    The original classifier has an area under the ROC curve of 0.836.
+
+
+    /Users/forest.polchow/anaconda3/lib/python3.6/site-packages/sklearn/preprocessing/data.py:645: DataConversionWarning: Data with input dtype int64 were all converted to float64 by StandardScaler.
+      return self.partial_fit(X, y)
+    /Users/forest.polchow/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:13: DataConversionWarning: Data with input dtype int64 were all converted to float64 by StandardScaler.
+      del sys.path[0]
+    /Users/forest.polchow/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:14: DataConversionWarning: Data with input dtype int64 were all converted to float64 by StandardScaler.
+      
+
+
 ### 4. The model above has an accuracy score that might be too good to believe. Using `y.value_counts()`, explain how `y` is affecting the accuracy score.
 
 
 ```python
 y.value_counts()
 ```
+
+
+
+
+    0    257
+    1     13
+    Name: Purchased, dtype: int64
+
+
 
 This is a case of misbalanced classes. The positive class represents only ≈ 5% of all the data. This can result in misleading accuracy.
 
@@ -475,6 +591,14 @@ plt.title("ROC Curve")
 plt.legend()
 plt.tight_layout()
 ```
+
+    The updated classifier has an accuracy score of 0.868.
+    The updated classifier has an area under the ROC curve of 0.9179487179487179.
+
+
+
+![png](index_files/index_42_1.png)
+
 
 ---
 ## Time Series
@@ -848,16 +972,11 @@ calc_yearly_max(seasonal)
 
 
 
-    {'2013': 0.014216997626629469,
-     '2014': 0.014216997626629469,
-     '2015': 0.014216997626629469,
-     '2016': 0.014216997626629469,
-     '2017': 0.014216997626629469,
-     '2018': -0.014125924404344192}
+    {'2013': 0.014216997626629509,
+     '2014': 0.014216997626629509,
+     '2015': 0.014216997626629509,
+     '2016': 0.014216997626629509,
+     '2017': 0.014216997626629509,
+     '2018': -0.014125924404344152}
 
 
-
-
-```python
-
-```
