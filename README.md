@@ -39,7 +39,7 @@ RSS &= \sum_{i=1}^n(actual - expected)^2 \\
 \end{align}
 $$ 
 
-### 1. What is a more generalized name for the RSS curve above? How is it related to training machine learning models?
+### 1. What is a more generalized name for the RSS curve above? How is it related to machine learning models?
 
 The residual sum of squares curve above is a specific example of a cost curve. When training machine learning models, the goal is to minimize the cost curve.
 
@@ -189,11 +189,11 @@ y = data['sales']
 X_train , X_test, y_train, y_test = train_test_split(X, y,random_state=2019)
 ```
 
-### 1. We'd like to add a bit of complexity to the model created in the example above, and we will do it by adding some polynomial terms. Write a Function to calculate train and test error for different polynomial degree (1-9).
+### 1. We'd like to add a bit of complexity to the model created in the example above, and we will do it by adding some polynomial terms. Write a Function to calculate train and test error for different polynomial degrees ranging from (1-10).
 
 This function should:
 * take `poly_degree` as a parameter that will be used to create all different possible polynomial degrees starting at 1 UP TO and including poly_degree
-* as you create the PolynomialFeatures object and fit linear regression models
+* create a PolynomialFeatures object for each degree and fit a linear regression model using the transformed data
 * calculate the root mean square error for each level of polynomial
 * return two lists that contain the `train_errors` and `test_errors` 
 
@@ -220,6 +220,11 @@ def calc_degree(poly_degree):
     return train_error_list, test_error_list
 ```
 
+
+```python
+error_train, error_test = calc_degree(10)
+```
+
 #error_train = [1.633049529710119,
  0.6544219763525787,
  0.4923003895833528,
@@ -241,7 +246,7 @@ def calc_degree(poly_degree):
  24002.511402029148,
  177660.21087344288]
 
-### 2. What is the optimal number of degrees for our features in this model? In general, how does increasing the polynomial degree relate to the Bias/Variance tradeoff? 
+### 2. What is the optimal number of degrees for our polynomial features in this model? In general, how does increasing the polynomial degree relate to the Bias/Variance tradeoff? 
 
 <img src ="visuals/rsme_poly_2.png" width = "600">
 
@@ -261,9 +266,9 @@ fig.savefig("visuals/rsme_poly.png",
             bbox_inches="tight")
 --->
 
-The optimal number of features in this example is 3 because there is a . As we increase the polynomial features, it is going to cause our training error to decrease, which decreases the bias but increases the variance (the testing error increases). In other words, the more complex the model, the higher the chance of overfitting. 
+The optimal number of features in this example is 3 because the testing error is minimized at this point, and it increases dramatically with a higher degree polynomial. As we increase the polynomial features, it is going to cause our training error to decrease, which decreases the bias but increases the variance (the testing error increases). In other words, the more complex the model, the higher the chance of overfitting. 
 
-### 3. In general what methods would you can use to reduce overfitting and underfitting? Provide an example for both and explain how each technique work to reduce the problems of underfitting and overfitting.
+### 3. In general what methods would you can use to reduce overfitting and underfitting? Provide an example for both and explain how each technique works to reduce the problems of underfitting and overfitting.
 
 Overfitting: Regularization. With regularization, more complex models are penalized. This ensures that the models are not trained to too much "noise."
 
@@ -412,9 +417,7 @@ print("F1: {}".format(F1))
     F1: 0.7894736842105262
 
 
-### Explain how precision is different from recall and why you should consider using the F-1 score when you are evaulating your model.
-
-### 2.  What is an example of when you would care more about recall than precision? Make sure to include information about errors in your explanation.
+### 2.  What is a real life example of when you would care more about recall than precision? Make sure to include information about errors in your explanation.
 
 We would care more about recall than precision in cases where a Type II error (a False Negative) would have serious consequences. An example of this would be a medical test that determines if someone has a serious disease. A higher recall would mean that we would have a higher chance of identifying all people who ACTUALLY had the serious disease.
 
@@ -475,11 +478,12 @@ plt.savefig("visuals/many_roc.png",
             bbox_inches="tight")
 --->
 
-### 3. Pick the best ROC curve from this graph and explain your choice. After picking your choice, explain how the ROC curve is constructed (not in terms of code, but in terms of theory).
+### 3. Pick the best ROC curve from this graph and explain your choice. 
 
 *Note: each ROC curve represents one model, each labeled with the feature(s) inside each model*.
 
-![many roc](visuals/many_roc.png)
+<img src = "visuals/many_roc.png" width = "700">
+
 
 The best ROC curve in this graph is for the one that contains all features (the pink one). This is because it has the largest area under the curve. The ROC curve is created by obtaining the ratio of the True Positive Rate to the False Positive Rate over all thresholds of a classification model.
 
@@ -552,7 +556,7 @@ y.value_counts()
 
 This is a case of misbalanced classes. The positive class represents only ≈ 5% of all the data. This can result in misleading accuracy.
 
-### 5. Update the inputs in the classification model using a technique to address the issues mentioned up above in question 4. 
+### 5. Update the inputs in the classification model using a technique to address the issues mentioned up above in question 4. Make sure to use a Logistic Regression model as your classifier.
 
 Be sure to include updates regarding:
 * the accuracy score; and
