@@ -5,7 +5,7 @@ This rubric will be used to assess students' performance on the Module 4 assessm
 ## Calculus, Cost Function, and Gradient Descent
 Point Value: 5
 
-1)  
+#### 1)  
 
 Point Value: 1.25
 
@@ -15,7 +15,7 @@ Point Value: 1.25
 
  *Learning Goal(s): Describe how minima and maxima are related to machine learning and optimization. Describe a cost curve and what it means to move along it*
 
-2)
+#### 2)
 
 Point Value: 1.25  
 
@@ -25,7 +25,7 @@ Point Value: 1.25
 
  *Learning Goal(s): Describe how to use an RSS curve to find the optimal parameters for a linear regression model. Describe a cost curve and what it means to move along it*
 
-3)
+#### 3)
 
 Point Value: 1.25
 
@@ -33,7 +33,7 @@ Point Value: 1.25
 
  *Learning Goal(s): Define step sizes in the context of gradient descent*
 
-4)
+#### 4)
 
 Point Value: 1.25
 
@@ -48,7 +48,7 @@ Point Value: 1.25
 ## Extensions to Linear Models
 Point Value: 5
 
-1)
+#### 1)
 
 Point Value: 1.5
 
@@ -62,7 +62,7 @@ Point Value: 1.5
 
  *Learning Goal(s): Use sklearn's built-in capabilities to create polynomial features*
 
-2)
+#### 2)
 
 Point Value: 1
 
@@ -72,7 +72,7 @@ Point Value: 1
 
  *Learning Goal(s): Describe the bias/variance tradeoff in machine learning. Discuss how bias and variance are related to over and underfitting*  
 
-3)
+#### 3)
 
 Point Value: 1
 
@@ -86,7 +86,7 @@ Point Value: 1
 
  *Learning Goal(s): Identify when it is appropriate to use certain methods of feature selection. Discuss how bias and variance are related to overfitting and underfitting*
 
-4)
+#### 4)
 
 Point Value: 1.5
 
@@ -102,7 +102,7 @@ Point Value: 1.5
 ## Introduction to Logistic Regression
 Point Value: 5
 
-1)
+#### 1)
 Point Value: 1
 
 0.34 points : calculates precision  
@@ -113,7 +113,7 @@ Point Value: 1
 
 *Learning Goal(s): Interpret a confusion matrix to assess performance of a model*
 
-2)
+#### 2)
 Point Value: 1
 
 0.5 points: identifies valid real-life example when precision is more important than recall
@@ -122,7 +122,7 @@ Point Value: 1
 
  *Learning Goal(s): Define precision and recall.*
 
-3)
+#### 3)
 
 Point Value: 1
 
@@ -132,7 +132,7 @@ Point Value: 1
 
  *Learning Goal(s): Explain how ROC and AUC are used to evaluate and choose models*
 
-4)
+#### 4)
 
 Point Value: 0.5
 
@@ -140,7 +140,7 @@ Point Value: 0.5
 
  *Learning Goal(s): Describe why class imbalance can lead to problems in machine learning*
 
-5)
+#### 5)
 
 Point Value: 1.5
 
@@ -157,12 +157,54 @@ Point Value: 1.5
 ## Working with Time Series Data
 Point Value: 5
 
-1)
- *Learning Goal(s):*
-2)
- *Learning Goal(s):*
-3)
- *Learning Goal(s):*
-4)
- *Learning Goal(s):*
-5) *Learning Goal(s):*
+#### 1)
+
+Point Value: 1
+
+0.5 points: transform the date feature to datetime
+
+0.5 points: set the datetime to the index
+
+ *Learning Goal(s): Load time series data into a pandas dataframe and perform time series indexing*
+
+#### 2)
+
+Point Value: 1
+
+0.5 points: resample on the monthly basis
+
+0.5 points: take the mean of the resampled data
+
+ *Learning Goal(s): Change the granularity of a time series*
+
+#### 3)
+
+Point Value: 1
+
+0.5 points: obtain the rolling mean and rolling standard deviation
+
+0.5 points: correctly determines whether or not the stock time series is stationary
+
+
+0.5 points:
+
+ *Learning Goal(s): Create visualizations of transformed time series as a visual aid to determine if stationarity has been achieved. Use rolling statistics an a check for stationarity*
+
+#### 4)
+
+Point Value: 1
+
+0.5 points: perform the Dickey-Fuller test using the statsmodels method
+
+0.5 points: interpret the p-value of the Dickey-Fuller test to indicate that the data is not stationary
+
+ *Learning Goal(s): Use the Dickey Fuller Test and conclude whether or not a dataset is exhibiting stationarity*
+
+#### 5)
+
+Point Value: 1
+
+0.5 points: uses time series indexing to select the maximum value for a given year
+
+0.5 points: returns a dictionary with the correct year and max value data
+ *Learning Goal(s): Perform time series indexing*
