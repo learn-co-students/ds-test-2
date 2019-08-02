@@ -8,7 +8,7 @@ This assessment is designed to test your understanding of the Mod 4 material. It
 * Calculus, Cost Function, and Gradient Descent
 * Extensions to Linear Models
 * Introduction to Linear Regression
-* Time Series Modeling
+* Working with Time Series Data
 
 
 Read the instructions carefully. You will be asked both to write code and respond to a few short answer questions.
@@ -86,96 +86,6 @@ from sklearn.preprocessing import StandardScaler
 data = pd.read_csv('raw_data/advertising.csv').drop('Unnamed: 0',axis=1)
 data.describe()
 ```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>TV</th>
-      <th>radio</th>
-      <th>newspaper</th>
-      <th>sales</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>count</th>
-      <td>200.000000</td>
-      <td>200.000000</td>
-      <td>200.000000</td>
-      <td>200.000000</td>
-    </tr>
-    <tr>
-      <th>mean</th>
-      <td>147.042500</td>
-      <td>23.264000</td>
-      <td>30.554000</td>
-      <td>14.022500</td>
-    </tr>
-    <tr>
-      <th>std</th>
-      <td>85.854236</td>
-      <td>14.846809</td>
-      <td>21.778621</td>
-      <td>5.217457</td>
-    </tr>
-    <tr>
-      <th>min</th>
-      <td>0.700000</td>
-      <td>0.000000</td>
-      <td>0.300000</td>
-      <td>1.600000</td>
-    </tr>
-    <tr>
-      <th>25%</th>
-      <td>74.375000</td>
-      <td>9.975000</td>
-      <td>12.750000</td>
-      <td>10.375000</td>
-    </tr>
-    <tr>
-      <th>50%</th>
-      <td>149.750000</td>
-      <td>22.900000</td>
-      <td>25.750000</td>
-      <td>12.900000</td>
-    </tr>
-    <tr>
-      <th>75%</th>
-      <td>218.825000</td>
-      <td>36.525000</td>
-      <td>45.100000</td>
-      <td>17.400000</td>
-    </tr>
-    <tr>
-      <th>max</th>
-      <td>296.400000</td>
-      <td>49.600000</td>
-      <td>114.000000</td>
-      <td>27.000000</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
 
 
 ```python
@@ -306,13 +216,6 @@ def train_regularizer(X_train, X_test, y_train, y_test):
     return np.sqrt(mean_squared_error(y_test,y_pred))
 ```
 
-
-
-
-    0.5151515151515152
-
-
-
 ---
 ## Introduction to Logistic Regression
 ---
@@ -411,11 +314,6 @@ print("precision: {}".format(precision))
 print("recall: {}".format(recall))
 print("F1: {}".format(F1))
 ```
-
-    precision: 0.8823529411764706
-    recall: 0.7142857142857143
-    F1: 0.7894736842105262
-
 
 ### 2.  What is a real life example of when you would care more about recall than precision? Make sure to include information about errors in your explanation.
 
@@ -526,33 +424,12 @@ auc = round(roc_auc_score(y_test, y_score), 3)
 print(f"The original classifier has an area under the ROC curve of {auc}.")
 ```
 
-    The original classifier has an accuracy score of 0.956.
-    The original classifier has an area under the ROC curve of 0.836.
-
-
-    /Users/forest.polchow/anaconda3/lib/python3.6/site-packages/sklearn/preprocessing/data.py:645: DataConversionWarning: Data with input dtype int64 were all converted to float64 by StandardScaler.
-      return self.partial_fit(X, y)
-    /Users/forest.polchow/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:13: DataConversionWarning: Data with input dtype int64 were all converted to float64 by StandardScaler.
-      del sys.path[0]
-    /Users/forest.polchow/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:14: DataConversionWarning: Data with input dtype int64 were all converted to float64 by StandardScaler.
-      
-
-
 ### 4. The model above has an accuracy score that might be too good to believe. Using `y.value_counts()`, explain how `y` is affecting the accuracy score.
 
 
 ```python
 y.value_counts()
 ```
-
-
-
-
-    0    257
-    1     13
-    Name: Purchased, dtype: int64
-
-
 
 This is a case of misbalanced classes. The positive class represents only ≈ 5% of all the data. This can result in misleading accuracy.
 
@@ -597,4 +474,390 @@ plt.ylabel("True positive rate")
 plt.title("ROC Curve")
 plt.legend()
 plt.tight_layout()
+```
+
+---
+## Time Series
+---
+
+<!---Create stock_df and save as .pkl
+stocks_df = pd.read_csv("raw_data/all_stocks_5yr.csv")
+stocks_df["clean_date"] = pd.to_datetime(stocks_df["date"], format="%Y-%m-%d")
+stocks_df.drop(["date", "clean_date", "volume", "Name"], axis=1, inplace=True)
+stocks_df.rename(columns={"string_date": "date"}, inplace=True)
+pickle.dump(stocks_df, open("write_data/all_stocks_5yr.pkl", "wb"))
+--->
+
+
+```python
+stocks_df = pickle.load(open("write_data/all_stocks_5yr.pkl", "rb"))
+stocks_df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>open</th>
+      <th>high</th>
+      <th>low</th>
+      <th>close</th>
+      <th>date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>15.07</td>
+      <td>15.12</td>
+      <td>14.63</td>
+      <td>14.75</td>
+      <td>February 08, 2013</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>14.89</td>
+      <td>15.01</td>
+      <td>14.26</td>
+      <td>14.46</td>
+      <td>February 11, 2013</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>14.45</td>
+      <td>14.51</td>
+      <td>14.10</td>
+      <td>14.27</td>
+      <td>February 12, 2013</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>14.30</td>
+      <td>14.94</td>
+      <td>14.25</td>
+      <td>14.66</td>
+      <td>February 13, 2013</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>14.94</td>
+      <td>14.96</td>
+      <td>13.16</td>
+      <td>13.99</td>
+      <td>February 14, 2013</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+### 1. Transform the `date` feature so that it becomes a `datetime` object that contains the following format: YYYY-MM-DD and set `date` to be the index of `stocks_df`.
+
+
+```python
+stocks_df["date"] = pd.to_datetime(stocks_df["date"], format="%B %d, %Y")
+stocks_df.set_index(keys="date", inplace=True)
+stocks_df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>open</th>
+      <th>high</th>
+      <th>low</th>
+      <th>close</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2013-02-08</th>
+      <td>15.07</td>
+      <td>15.12</td>
+      <td>14.63</td>
+      <td>14.75</td>
+    </tr>
+    <tr>
+      <th>2013-02-11</th>
+      <td>14.89</td>
+      <td>15.01</td>
+      <td>14.26</td>
+      <td>14.46</td>
+    </tr>
+    <tr>
+      <th>2013-02-12</th>
+      <td>14.45</td>
+      <td>14.51</td>
+      <td>14.10</td>
+      <td>14.27</td>
+    </tr>
+    <tr>
+      <th>2013-02-13</th>
+      <td>14.30</td>
+      <td>14.94</td>
+      <td>14.25</td>
+      <td>14.66</td>
+    </tr>
+    <tr>
+      <th>2013-02-14</th>
+      <td>14.94</td>
+      <td>14.96</td>
+      <td>13.16</td>
+      <td>13.99</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+### 2. Perform monthly upsampling on `stocks_df` that takes the mean of the `open`, `high`, `low`, and `close` features on a monthly basis. Store the results in `stocks_monthly_df`.
+
+> Hint: `stocks_monthly_df` should have 61 rows and 4 columns after you perform upsampling.
+
+
+```python
+stocks_monthly = stocks_df.resample("MS")
+stocks_monthly_df = stocks_monthly.mean()
+stocks_monthly_df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>open</th>
+      <th>high</th>
+      <th>low</th>
+      <th>close</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2013-02-01</th>
+      <td>58.135082</td>
+      <td>58.656064</td>
+      <td>57.600095</td>
+      <td>58.106483</td>
+    </tr>
+    <tr>
+      <th>2013-03-01</th>
+      <td>59.430461</td>
+      <td>59.924352</td>
+      <td>58.986414</td>
+      <td>59.531515</td>
+    </tr>
+    <tr>
+      <th>2013-04-01</th>
+      <td>60.261989</td>
+      <td>60.829809</td>
+      <td>59.653234</td>
+      <td>60.294833</td>
+    </tr>
+    <tr>
+      <th>2013-05-01</th>
+      <td>63.189973</td>
+      <td>63.854413</td>
+      <td>62.681440</td>
+      <td>63.284582</td>
+    </tr>
+    <tr>
+      <th>2013-06-01</th>
+      <td>62.080930</td>
+      <td>62.672076</td>
+      <td>61.373427</td>
+      <td>61.994978</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+stocks_monthly_df.shape
+```
+
+
+
+
+    (61, 4)
+
+
+
+### 3. Create a line graph that visualizes the monthly open stock prices from `stocks_monthly_df` for the purposes of identifying if average monthly open stock price is stationary or not using the rolling mean and rolling standard deviation.
+
+> Hint: 
+> * store your sliced version of `stocks_monthly_df` in a new DataFrame called `open_monthly_df`;
+> * use a window size of 3 to represent one quarter of time in a year
+
+
+```python
+open_monthly_df = stocks_monthly_df.loc[:, "open"]
+
+rolmean = open_monthly_df.rolling(window=3, center=False).mean()
+rolstd = open_monthly_df.rolling(window=3, center=False).std()
+
+fig, ax = plt.subplots(figsize=(13, 10))
+ax.plot(open_monthly_df, color="blue",label="Average monthly opening stock price")
+ax.plot(rolmean, color="red", label="Rolling quarterly mean")
+ax.plot(rolstd, color="black", label="Rolling quarterly std. deviation")
+ax.set_ylim(0, 120)
+ax.legend()
+fig.suptitle("Average monthly open stock prices, Feb. 2013 to Feb. 2018")
+fig.tight_layout()
+```
+
+
+![png](index_files/index_51_0.png)
+
+
+The average monthly open stock price is not stationary, which is supported by the fact that the rolling mean is not flat.
+
+### 4. Use the Dickey-Fuller Test to identify if `open_monthly_df` is stationary. Does this confirm your answer from Question 3? Explain why the time series is stationary or not based on the output from the Dickey-Fuller Test.
+
+
+```python
+from statsmodels.tsa.stattools import adfuller
+
+dftest = adfuller(open_monthly_df)
+
+dfoutput = pd.Series(dftest[0:4], index=['Test Statistic','p-value','#Lags Used','Number of Observations Used'])
+
+print ('Results of Dickey-Fuller Test:')
+print(dfoutput)
+```
+
+    Results of Dickey-Fuller Test:
+    Test Statistic                 -0.173154
+    p-value                         0.941647
+    #Lags Used                      2.000000
+    Number of Observations Used    58.000000
+    dtype: float64
+
+
+The p-value is close to 1, so the time series are clearly not stationary. The answer from question 3 is confirmed.
+
+### 5. Looking at the decomposition of the time series in `open_monthly_df`, it looks like the peaks are the same value. To confirm or deny this, create a function that returns a dictionary where each key is year and each values is the maximum value from the `seasonal` object for each year.
+
+
+```python
+from statsmodels.tsa.seasonal import seasonal_decompose
+decomposition = seasonal_decompose(np.log(open_monthly_df))
+
+# Gather the trend, seasonality and noise of decomposed object
+seasonal = decomposition.seasonal
+
+# Plot gathered statistics
+plt.figure(figsize=(13, 10))
+plt.plot(seasonal,label='Seasonality', color="blue")
+plt.title("Seasonality of average monthly open stock prices, Feb. 2013 to Feb. 2018")
+plt.ylabel("Average monthly open stock prices")
+plt.tight_layout()
+plt.show()
+```
+
+
+![png](index_files/index_57_0.png)
+
+
+
+```python
+def calc_yearly_max(seasonal_series):
+    """Returns the max seasonal value for each year"""
+    output = {}
+    for year in seasonal.index.year.unique():
+        year_str = str(year)
+        output[year_str] = seasonal[year_str].max()
+    return output
+```
+
+
+```python
+calc_yearly_max(seasonal)
+```
+
+
+
+
+    {'2013': 0.014216997626629469,
+     '2014': 0.014216997626629469,
+     '2015': 0.014216997626629469,
+     '2016': 0.014216997626629469,
+     '2017': 0.014216997626629469,
+     '2018': -0.014125924404344192}
+
+
+
+
+```python
+
 ```
