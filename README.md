@@ -83,9 +83,125 @@ from sklearn.preprocessing import StandardScaler
 
 
 ```python
+# __SOLUTION__ 
+import pandas as pd
+import itertools
+import seaborn as sns
+import matplotlib.pyplot as plt
+%matplotlib inline
+import seaborn as sns
+import numpy as np
+from sklearn.linear_model import Lasso, Ridge
+import pickle
+from sklearn.metrics import mean_squared_error, roc_curve, roc_auc_score, accuracy_score
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.preprocessing import StandardScaler
+```
+
+
+```python
 data = pd.read_csv('raw_data/advertising.csv').drop('Unnamed: 0',axis=1)
 data.describe()
 ```
+
+
+```python
+# __SOLUTION__ 
+data = pd.read_csv('raw_data/advertising.csv').drop('Unnamed: 0',axis=1)
+data.describe()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>TV</th>
+      <th>radio</th>
+      <th>newspaper</th>
+      <th>sales</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>200.000000</td>
+      <td>200.000000</td>
+      <td>200.000000</td>
+      <td>200.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>147.042500</td>
+      <td>23.264000</td>
+      <td>30.554000</td>
+      <td>14.022500</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>85.854236</td>
+      <td>14.846809</td>
+      <td>21.778621</td>
+      <td>5.217457</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>0.700000</td>
+      <td>0.000000</td>
+      <td>0.300000</td>
+      <td>1.600000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>74.375000</td>
+      <td>9.975000</td>
+      <td>12.750000</td>
+      <td>10.375000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>149.750000</td>
+      <td>22.900000</td>
+      <td>25.750000</td>
+      <td>12.900000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>218.825000</td>
+      <td>36.525000</td>
+      <td>45.100000</td>
+      <td>17.400000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>296.400000</td>
+      <td>49.600000</td>
+      <td>114.000000</td>
+      <td>27.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
 
 
 ```python
@@ -95,6 +211,20 @@ y = data['sales']
 
 
 ```python
+# __SOLUTION__ 
+X = data.drop('sales', axis=1)
+y = data['sales']
+```
+
+
+```python
+# split the data into training and testing set. Do not change the random state please!
+X_train , X_test, y_train, y_test = train_test_split(X, y,random_state=2019)
+```
+
+
+```python
+# __SOLUTION__ 
 # split the data into training and testing set. Do not change the random state please!
 X_train , X_test, y_train, y_test = train_test_split(X, y,random_state=2019)
 ```
@@ -120,6 +250,35 @@ def calc_degree(poly_degree):
 
 
 ```python
+# __SOLUTION__ 
+# SOLUTION
+def calc_degree(poly_degree):
+    """Calculate train and test error for different polynomial degree (1-9)"""
+    train_error_list = []
+    test_error_list = []
+    for i in range(1, poly_degree + 1):
+        poly = PolynomialFeatures(degree=i, interaction_only=False)
+        X_poly_train = poly.fit_transform(X_train)
+        X_poly_test = poly.transform(X_test)
+        lr_poly = LinearRegression()
+        lr_poly.fit(X_poly_train,y_train)
+
+        train_error = np.sqrt(mean_squared_error(y_train, lr_poly.predict(X_poly_train)))
+        test_error = np.sqrt(mean_squared_error(y_test, lr_poly.predict(X_poly_test)))
+        train_error_list.append(train_error)
+        test_error_list.append(test_error)
+
+    return train_error_list, test_error_list
+```
+
+
+```python
+error_train, error_test = calc_degree(10)
+```
+
+
+```python
+# __SOLUTION__ 
 error_train, error_test = calc_degree(10)
 ```
 
@@ -195,6 +354,22 @@ X_poly_test = pickle.load(open("write_data/poly_test_model.pkl", "rb"))
 def train_regularizer(X_train, X_test, y_train, y_test):
     # // your code here //
     pass
+```
+
+
+```python
+# __SOLUTION__ 
+X_poly_train = pickle.load(open("write_data/poly_train_model.pkl", "rb"))
+X_poly_test = pickle.load(open("write_data/poly_test_model.pkl", "rb"))
+
+def train_regularizer(X_train, X_test, y_train, y_test):
+    std = StandardScaler()
+    X_train_transformed = std.fit_transform(X_poly_train)
+    X_test_transformed = std.transform(X_poly_test)
+    lasso = Lasso()
+    lasso.fit(X_train_transformed,y_train)
+    y_pred = lasso.predict(X_test_transformed)
+    return np.sqrt(mean_squared_error(y_test,y_pred))
 ```
 
 ---
@@ -289,6 +464,23 @@ plt.savefig("visuals/cnf_matrix.png",
 ```python
 # // your code here //
 ```
+
+
+```python
+# __SOLUTION__ 
+precision = 30/(30+4)
+recall = 30 / (30 + 12)
+F1 = 2 * (precision * recall) / (precision + recall)
+
+print("precision: {}".format(precision))
+print("recall: {}".format(recall))
+print("F1: {}".format(F1))
+```
+
+    precision: 0.8823529411764706
+    recall: 0.7142857142857143
+    F1: 0.7894736842105262
+
 
 ### 2.  What is a real life example of when you would care more about recall than precision? Make sure to include information about errors in your explanation.
 
@@ -399,12 +591,72 @@ auc = round(roc_auc_score(y_test, y_score), 3)
 print(f"The original classifier has an area under the ROC curve of {auc}.")
 ```
 
+
+```python
+# __SOLUTION__ 
+network_df = pickle.load(open("write_data/sample_network_data.pkl", "rb"))
+
+# partion features and target 
+X = network_df.drop("Purchased", axis=1)
+y = network_df["Purchased"]
+
+# train test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=2019)
+
+# scale features
+scale = StandardScaler()
+scale.fit(X_train)
+X_train = scale.transform(X_train)
+X_test = scale.transform(X_test)
+
+# build classifier
+model = LogisticRegression(C=1e5, solver="lbfgs")
+model.fit(X_train,y_train)
+y_test_pred = model.predict(X_test)
+
+# get the accuracy score
+print(f"The original classifier has an accuracy score of {round(accuracy_score(y_test, y_test_pred), 3)}.")
+
+# get the area under the curve from an ROC curve
+y_score = model.decision_function(X_test)
+fpr, tpr, _ = roc_curve(y_test, y_score)
+auc = round(roc_auc_score(y_test, y_score), 3)
+print(f"The original classifier has an area under the ROC curve of {auc}.")
+```
+
+    The original classifier has an accuracy score of 0.956.
+    The original classifier has an area under the ROC curve of 0.836.
+
+
+    /Users/forest.polchow/anaconda3/lib/python3.6/site-packages/sklearn/preprocessing/data.py:645: DataConversionWarning: Data with input dtype int64 were all converted to float64 by StandardScaler.
+      return self.partial_fit(X, y)
+    /Users/forest.polchow/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:13: DataConversionWarning: Data with input dtype int64 were all converted to float64 by StandardScaler.
+      del sys.path[0]
+    /Users/forest.polchow/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:14: DataConversionWarning: Data with input dtype int64 were all converted to float64 by StandardScaler.
+      
+
+
 ### 4. The model above has an accuracy score that might be too good to believe. Using `y.value_counts()`, explain how `y` is affecting the accuracy score.
 
 
 ```python
 y.value_counts()
 ```
+
+
+```python
+# __SOLUTION__ 
+y.value_counts()
+```
+
+
+
+
+    0    257
+    1     13
+    Name: Purchased, dtype: int64
+
+
 
 // your answer here //
 
@@ -427,6 +679,52 @@ auc_update = None
 print(f"The updated classifier has an area under the ROC curve of {auc_update}.")
 ```
 
+
+```python
+# __SOLUTION__ 
+from imblearn.over_sampling import SMOTE
+smote = SMOTE(random_state=2019)
+X_train_resampled, y_train_resampled = smote.fit_sample(X_train, y_train) 
+model_smote = LogisticRegression(C=1e5, solver="lbfgs")
+model_smote.fit(X_train_resampled, y_train_resampled)
+y_test_pred_smote = model_smote.predict(X_test)
+y_train_pred_smote = model_smote.predict(X_train_resampled)
+
+# assess accuracy
+score_smote = round(accuracy_score(y_test, y_test_pred_smote), 3)
+print(f"The updated classifier has an accuracy score of {score_smote}.")
+
+y_score_smote = model_smote.decision_function(X_test)
+fpr_smote, tpr_smote, _ = roc_curve(y_test, y_score_smote)
+auc_smote = roc_auc_score(y_test, y_score_smote)
+print(f"The updated classifier has an area under the ROC curve of {auc_smote}.")
+
+lw = 2
+plt.plot(fpr, tpr,
+         lw=lw, label="Class imbalanced")
+plt.plot(fpr_smote, tpr_smote,
+         lw=lw, label="Class balanced after using SMOTE")
+# create foundation of the plot
+plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.yticks([i / 20.0 for i in range(21)])
+plt.xticks([i / 20.0 for i in range(21)])
+plt.xlabel("False positive rate")
+plt.ylabel("True positive rate")
+plt.title("ROC Curve")
+plt.legend()
+plt.tight_layout()
+```
+
+    The updated classifier has an accuracy score of 0.868.
+    The updated classifier has an area under the ROC curve of 0.9179487179487179.
+
+
+
+![png](index_files/index_53_1.png)
+
+
 ---
 ## Time Series
 ---
@@ -445,12 +743,178 @@ stocks_df = pickle.load(open("write_data/all_stocks_5yr.pkl", "rb"))
 stocks_df.head()
 ```
 
+
+```python
+# __SOLUTION__ 
+stocks_df = pickle.load(open("write_data/all_stocks_5yr.pkl", "rb"))
+stocks_df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>open</th>
+      <th>high</th>
+      <th>low</th>
+      <th>close</th>
+      <th>date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>15.07</td>
+      <td>15.12</td>
+      <td>14.63</td>
+      <td>14.75</td>
+      <td>February 08, 2013</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>14.89</td>
+      <td>15.01</td>
+      <td>14.26</td>
+      <td>14.46</td>
+      <td>February 11, 2013</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>14.45</td>
+      <td>14.51</td>
+      <td>14.10</td>
+      <td>14.27</td>
+      <td>February 12, 2013</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>14.30</td>
+      <td>14.94</td>
+      <td>14.25</td>
+      <td>14.66</td>
+      <td>February 13, 2013</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>14.94</td>
+      <td>14.96</td>
+      <td>13.16</td>
+      <td>13.99</td>
+      <td>February 14, 2013</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
 ### 1. Transform the `date` feature so that it becomes a `datetime` object that contains the following format: YYYY-MM-DD and set `date` to be the index of `stocks_df`.
 
 
 ```python
 # // your code here //
 ```
+
+
+```python
+# __SOLUTION__ 
+stocks_df["date"] = pd.to_datetime(stocks_df["date"], format="%B %d, %Y")
+stocks_df.set_index(keys="date", inplace=True)
+stocks_df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>open</th>
+      <th>high</th>
+      <th>low</th>
+      <th>close</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2013-02-08</th>
+      <td>15.07</td>
+      <td>15.12</td>
+      <td>14.63</td>
+      <td>14.75</td>
+    </tr>
+    <tr>
+      <th>2013-02-11</th>
+      <td>14.89</td>
+      <td>15.01</td>
+      <td>14.26</td>
+      <td>14.46</td>
+    </tr>
+    <tr>
+      <th>2013-02-12</th>
+      <td>14.45</td>
+      <td>14.51</td>
+      <td>14.10</td>
+      <td>14.27</td>
+    </tr>
+    <tr>
+      <th>2013-02-13</th>
+      <td>14.30</td>
+      <td>14.94</td>
+      <td>14.25</td>
+      <td>14.66</td>
+    </tr>
+    <tr>
+      <th>2013-02-14</th>
+      <td>14.94</td>
+      <td>14.96</td>
+      <td>13.16</td>
+      <td>13.99</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
 
 ### 2. Perform monthly upsampling on `stocks_df` that takes the mean of the `open`, `high`, `low`, and `close` features on a monthly basis. Store the results in `stocks_monthly_df`.
 
@@ -461,11 +925,108 @@ stocks_df.head()
 # // your code here //
 ```
 
+
+```python
+# __SOLUTION__ 
+stocks_monthly = stocks_df.resample("MS")
+stocks_monthly_df = stocks_monthly.mean()
+stocks_monthly_df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>open</th>
+      <th>high</th>
+      <th>low</th>
+      <th>close</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2013-02-01</th>
+      <td>58.135082</td>
+      <td>58.656064</td>
+      <td>57.600095</td>
+      <td>58.106483</td>
+    </tr>
+    <tr>
+      <th>2013-03-01</th>
+      <td>59.430461</td>
+      <td>59.924352</td>
+      <td>58.986414</td>
+      <td>59.531515</td>
+    </tr>
+    <tr>
+      <th>2013-04-01</th>
+      <td>60.261989</td>
+      <td>60.829809</td>
+      <td>59.653234</td>
+      <td>60.294833</td>
+    </tr>
+    <tr>
+      <th>2013-05-01</th>
+      <td>63.189973</td>
+      <td>63.854413</td>
+      <td>62.681440</td>
+      <td>63.284582</td>
+    </tr>
+    <tr>
+      <th>2013-06-01</th>
+      <td>62.080930</td>
+      <td>62.672076</td>
+      <td>61.373427</td>
+      <td>61.994978</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
 ### 3. Create a line graph that visualizes the monthly open stock prices from `stocks_monthly_df` for the purposes of identifying if average monthly open stock price is stationary or not using the rolling mean and rolling standard deviation.
 
 > Hint: 
 > * store your sliced version of `stocks_monthly_df` in a new DataFrame called `open_monthly_df`;
 > * use a window size of 3 to represent one quarter of time in a year
+
+
+```python
+# __SOLUTION__ 
+stocks_monthly_df.shape
+```
+
+
+
+
+    (61, 4)
+
+
 
 
 ```python
@@ -489,6 +1050,28 @@ fig.tight_layout()
 
 // your answer here //
 
+
+```python
+# __SOLUTION__ 
+open_monthly_df = stocks_monthly_df.loc[:, "open"]
+
+rolmean = open_monthly_df.rolling(window=3, center=False).mean()
+rolstd = open_monthly_df.rolling(window=3, center=False).std()
+
+fig, ax = plt.subplots(figsize=(13, 10))
+ax.plot(open_monthly_df, color="blue",label="Average monthly opening stock price")
+ax.plot(rolmean, color="red", label="Rolling quarterly mean")
+ax.plot(rolstd, color="black", label="Rolling quarterly std. deviation")
+ax.set_ylim(0, 120)
+ax.legend()
+fig.suptitle("Average monthly open stock prices, Feb. 2013 to Feb. 2018")
+fig.tight_layout()
+```
+
+
+![png](index_files/index_67_0.png)
+
+
 ### 4. Use the Dickey-Fuller Test to identify if `open_monthly_df` is stationary. Does this confirm your answer from Question 3? Explain why the time series is stationary or not based on the output from the Dickey-Fuller Test.
 
 
@@ -497,6 +1080,27 @@ fig.tight_layout()
 ```
 
 // your answer here //
+
+
+```python
+# __SOLUTION__ 
+from statsmodels.tsa.stattools import adfuller
+
+dftest = adfuller(open_monthly_df)
+
+dfoutput = pd.Series(dftest[0:4], index=['Test Statistic','p-value','#Lags Used','Number of Observations Used'])
+
+print ('Results of Dickey-Fuller Test:')
+print(dfoutput)
+```
+
+    Results of Dickey-Fuller Test:
+    Test Statistic                 -0.173154
+    p-value                         0.941647
+    #Lags Used                      2.000000
+    Number of Observations Used    58.000000
+    dtype: float64
+
 
 ### 5. Looking at the decomposition of the time series in `open_monthly_df`, it looks like the peaks are the same value. To confirm or deny this, create a function that returns a dictionary where each key is year and each values is the maximum value from the `seasonal` object for each year.
 
@@ -527,5 +1131,63 @@ def calc_yearly_max(seasonal_series):
 
 
 ```python
+# __SOLUTION__ 
+from statsmodels.tsa.seasonal import seasonal_decompose
+decomposition = seasonal_decompose(np.log(open_monthly_df))
+
+# Gather the trend, seasonality and noise of decomposed object
+seasonal = decomposition.seasonal
+
+# Plot gathered statistics
+plt.figure(figsize=(13, 10))
+plt.plot(seasonal,label='Seasonality', color="blue")
+plt.title("Seasonality of average monthly open stock prices, Feb. 2013 to Feb. 2018")
+plt.ylabel("Average monthly open stock prices")
+plt.tight_layout()
+plt.show()
+```
+
+
+![png](index_files/index_75_0.png)
+
+
+
+```python
 calc_yearly_max(seasonal)
+```
+
+
+```python
+# __SOLUTION__ 
+def calc_yearly_max(seasonal_series):
+    """Returns the max seasonal value for each year"""
+    output = {}
+    for year in seasonal.index.year.unique():
+        year_str = str(year)
+        output[year_str] = seasonal[year_str].max()
+    return output
+```
+
+
+```python
+# __SOLUTION__ 
+calc_yearly_max(seasonal)
+```
+
+
+
+
+    {'2013': 0.014216997626629509,
+     '2014': 0.014216997626629509,
+     '2015': 0.014216997626629509,
+     '2016': 0.014216997626629509,
+     '2017': 0.014216997626629509,
+     '2018': -0.014125924404344152}
+
+
+
+
+```python
+# __SOLUTION__ 
+
 ```
