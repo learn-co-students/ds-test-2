@@ -41,21 +41,66 @@ $$
 
 ### 1. What is a more generalized name for the RSS curve above? How is it related to machine learning models?
 
-// your answer here //
+
+```python
+# Your answer here
+```
+
+
+```python
+# __SOLUTION__
+# The residual sum of squares curve above is a specific example of a cost curve. 
+# When training machine learning models, the goal is to minimize the cost curve.
+```
 
 ### 2. Would you rather choose a $m$ value of 0.08 or 0.03 from the curve up above? In your answer, also explain what it means to move along the curve in relation to the best fit line with respect to $m$. 
 
-// your answer here //
+
+```python
+# Your answer here
+```
+
+
+```python
+# __SOLUTION__
+# It would be better to have a value of 0.03 rather than 0.08 in the cost curve above. 
+# The reason for this is that the RSS is lower for the value of 0.03. 
+# As m changes values from 0.00 to 0.10 the Residual Sum of Squares is changing.
+# The higher the value of the RSS, the worse the model is performing.
+```
 
 ![](visuals/gd.png)
 
 ### 3. Using the gradient descent visual from above, explain why the distance between each step is getting smaller as more steps occur with gradient descent.
 
-// your answer here //
+
+```python
+# Your answer here
+```
+
+
+```python
+# __SOLUTION__
+# The distance between the steps is getting smaller because the slope gradually 
+# becomes less and less steep as you get closer to finding the minimum.
+```
 
 ### 4. What is the purpose of a learning rate in gradient descent? Explain how a very small and a very large learning rate would affect the gradient descent.
 
-// your answer here //
+
+```python
+# Your answer here
+```
+
+
+```python
+# __SOLUTION__
+# Learning rate is a number ranging from 0.0 to 1.0 that is multiplied by each step that 
+# is taken during gradient descent. If the learning rate is smaller, the step sizes will become smaller. 
+# If the learning rate is larger, the step sizes will be larger, up until the point where the 
+# learning rate is 1.0, and it is the same as moving along the gradient normally. 
+# Learning rate is present in gradient descent to help ensure that an optimal minimum on the cost curve is discovered.
+```
 
 ---
 ## Extensions to Linear Regression
@@ -251,7 +296,6 @@ def calc_degree(poly_degree):
 
 ```python
 # __SOLUTION__ 
-# SOLUTION
 def calc_degree(poly_degree):
     """Calculate train and test error for different polynomial degree (1-9)"""
     train_error_list = []
@@ -323,11 +367,37 @@ fig.savefig("visuals/rsme_poly.png",
             bbox_inches="tight")
 --->
 
-// your answer here //
+
+```python
+# Your answer here
+```
+
+
+```python
+# __SOLUTION__
+# The optimal number of features in this example is 3 because the testing error 
+# is minimized at this point, and it increases dramatically with a higher degree polynomial. 
+# As we increase the polynomial features, it is going to cause our training error to decrease, 
+# which decreases the bias but increases the variance (the testing error increases). 
+# In other words, the more complex the model, the higher the chance of overfitting.
+```
 
 ### 3. In general what methods would you can use to reduce overfitting and underfitting? Provide an example for both and explain how each technique works to reduce the problems of underfitting and overfitting.
 
-// your answer here //
+
+```python
+# Your answer here
+```
+
+
+```python
+# __SOLUTION__
+# Overfitting: Regularization. With regularization, more complex models are penalized. 
+# This ensures that the models are not trained to too much "noise."
+
+# Underfitting: Feature engineering. By adding additional features, you enable your 
+# machine learning models to gain insights about your data.
+```
 
 ### 4. Create the function `train_regularizer` below to train a regularized model and obtain the the testing error. You can use a regularization technique of your choosing.
 
@@ -484,7 +554,18 @@ print("F1: {}".format(F1))
 
 ### 2.  What is a real life example of when you would care more about recall than precision? Make sure to include information about errors in your explanation.
 
-// your answer here //
+
+```python
+# Your answer here
+```
+
+
+```python
+# __SOLUTION__
+# We would care more about recall than precision in cases where a Type II error (a False Negative) would 
+# have serious consequences. An example of this would be a medical test that determines if someone has a serious disease.
+# A higher recall would mean that we would have a higher chance of identifying all people who ACTUALLY had the serious disease.
+```
 
 <!---
 # save preprocessed train/test split objects
@@ -550,7 +631,18 @@ plt.savefig("visuals/many_roc.png",
 <img src = "visuals/many_roc.png" width = "700">
 
 
-// your answer here //
+
+```python
+# Your answer here
+```
+
+
+```python
+# __SOLUTION__
+# The best ROC curve in this graph is for the one that contains all features (the pink one). 
+# This is because it has the largest area under the curve. The ROC curve is created by obtaining
+# the ratio of the True Positive Rate to the False Positive Rate over all thresholds of a classification model.
+```
 
 <!---
 # sorting by 'Purchased' and then dropping the last 130 records
@@ -722,7 +814,7 @@ plt.tight_layout()
 
 
 
-![png](index_files/index_53_1.png)
+![png](index_files/index_61_1.png)
 
 
 ---
@@ -1069,7 +1161,7 @@ fig.tight_layout()
 ```
 
 
-![png](index_files/index_67_0.png)
+![png](index_files/index_75_0.png)
 
 
 ### 4. Use the Dickey-Fuller Test to identify if `open_monthly_df` is stationary. Does this confirm your answer from Question 3? Explain why the time series is stationary or not based on the output from the Dickey-Fuller Test.
@@ -1078,8 +1170,6 @@ fig.tight_layout()
 ```python
 # // your code here
 ```
-
-// your answer here //
 
 
 ```python
@@ -1101,6 +1191,18 @@ print(dfoutput)
     Number of Observations Used    58.000000
     dtype: float64
 
+
+
+```python
+# Your answer here
+```
+
+
+```python
+# __SOLUTION__
+# The p-value is close to 1, so the time series are clearly not stationary. 
+# The answer from question 3 is confirmed.
+```
 
 ### 5. Looking at the decomposition of the time series in `open_monthly_df`, it looks like the peaks are the same value. To confirm or deny this, create a function that returns a dictionary where each key is year and each values is the maximum value from the `seasonal` object for each year.
 
@@ -1148,7 +1250,7 @@ plt.show()
 ```
 
 
-![png](index_files/index_75_0.png)
+![png](index_files/index_84_0.png)
 
 
 
@@ -1185,9 +1287,3 @@ calc_yearly_max(seasonal)
      '2018': -0.014125924404344152}
 
 
-
-
-```python
-# __SOLUTION__ 
-
-```
