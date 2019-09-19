@@ -7,7 +7,7 @@ This assessment is designed to test your understanding of the Mod 4 material. It
 
 * Calculus, Cost Function, and Gradient Descent
 * Extensions to Linear Models
-* Introduction to Linear Regression
+* Introduction to Logistic Regression
 * Working with Time Series Data
 
 
