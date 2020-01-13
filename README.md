@@ -1,13 +1,14 @@
 
-<h1 align="center">Module 4 Assessment</h1>
+<h1 align="center">Module 3 Code Challenge</h1>
 
 ## Overview
 
-This assessment is designed to test your understanding of the Mod 4 material. It covers:
+This assessment is designed to test your understanding of the Mod 3 materials. It covers:
 
 * Calculus, Cost Function, and Gradient Descent
-* Extensions to Linear Models
 * Introduction to Logistic Regression
+* Decision Trees
+* Ensemble Models 
 
 
 Read the instructions carefully. You will be asked both to write code and respond to a few short answer questions.
@@ -99,229 +100,6 @@ $$
 # If the learning rate is larger, the step sizes will be larger. 
 # Learning rate is present in gradient descent to help ensure that an optimal minimum on the cost curve is discovered.
 ```
-
----
-## Extensions to Linear Regression [Suggested Time: 25 min]
----
-
-In this section, you're going to be creating linear models that are more complicated than a simple linear regression. In the cells below, we are importing relevant modules that you might need later on. We also load and prepare the dataset for you.
-
-
-```python
-import pandas as pd
-import itertools
-import seaborn as sns
-import matplotlib.pyplot as plt
-%matplotlib inline
-import seaborn as sns
-import numpy as np
-from sklearn.linear_model import Lasso, Ridge
-import pickle
-from sklearn.metrics import mean_squared_error, roc_curve, roc_auc_score, accuracy_score
-from sklearn.linear_model import LinearRegression, LogisticRegression
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.preprocessing import StandardScaler
-```
-
-
-```python
-# __SOLUTION__ 
-import pandas as pd
-import itertools
-import seaborn as sns
-import matplotlib.pyplot as plt
-%matplotlib inline
-import seaborn as sns
-import numpy as np
-from sklearn.linear_model import Lasso, Ridge
-import pickle
-from sklearn.metrics import mean_squared_error, roc_curve, roc_auc_score, accuracy_score
-from sklearn.linear_model import LinearRegression, LogisticRegression
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.preprocessing import StandardScaler
-```
-
-
-```python
-data = pd.read_csv('raw_data/advertising.csv').drop('Unnamed: 0',axis=1)
-data.describe()
-```
-
-
-```python
-# __SOLUTION__ 
-data = pd.read_csv('raw_data/advertising.csv').drop('Unnamed: 0',axis=1)
-data.describe()
-```
-
-
-```python
-X = data.drop('sales', axis=1)
-y = data['sales']
-```
-
-
-```python
-# __SOLUTION__ 
-X = data.drop('sales', axis=1)
-y = data['sales']
-```
-
-
-```python
-# split the data into training and testing set. Do not change the random state please!
-X_train , X_test, y_train, y_test = train_test_split(X, y,random_state=2019)
-```
-
-
-```python
-# __SOLUTION__ 
-# split the data into training and testing set. Do not change the random state please!
-X_train , X_test, y_train, y_test = train_test_split(X, y,random_state=2019)
-```
-
-### 1. We'd like to add a bit of complexity to the model created in the example above, and we will do it by adding some polynomial terms. Write a function to calculate train and test error for different polynomial degrees.
-
-This function should:
-* take `degree` as a parameter that will be used to create polynomial features to be used in a linear regression model
-* create a PolynomialFeatures object for each degree and fit a linear regression model using the transformed data
-* calculate the mean square error for each level of polynomial
-* return the `train_error` and `test_error` 
-
-
-
-```python
-def polynomial_regression(degree):
-    """
-    Calculate train and test errorfor a linear regression with polynomial features.
-    (Hint: use PolynomialFeatures)
-    
-    input: Polynomial degree
-    output: Mean squared error for train and test set
-    """
-    # // your code here //
-    
-    train_error = None
-    test_error = None
-    return train_error, test_error
-```
-
-
-```python
-# __SOLUTION__
-
-# do a polynomial regression
-def polynomial_regression(degree):
-    """
-    Calculate train and test errorfor a linear regression with polynomial features.
-    (Hint: use PolynomialFeatures)
-    
-    input: Polynomial degree
-    output: Mean squared error for train and test set
-    """
-    poly = PolynomialFeatures(degree=degree,interaction_only=False)
-    X_poly_train = poly.fit_transform(X_train)
-    X_poly_test = poly.transform(X_test)
-    lr_poly = LinearRegression()
-    lr_poly.fit(X_poly_train,y_train)
-    train_error = mean_squared_error(y_train, lr_poly.predict(X_poly_train))
-    test_error = mean_squared_error(y_test, lr_poly.predict(X_poly_test))
-    return train_error, test_error
-```
-
-#### Try out your new function
-
-
-```python
-polynomial_regression(3)
-```
-
-
-```python
-# __SOLUTION__ 
-polynomial_regression(3)
-```
-
-#### Check your answers
-
-MSE for degree 3:
-- Train: 0.2423596735839209
-- Test: 0.15281375973923944
-
-MSE for degree 4:
-- Train: 0.18179109317368244
-- Test: 1.9522597174462015
-
-### 2. What is the optimal number of degrees for our polynomial features in this model? In general, how does increasing the polynomial degree relate to the Bias/Variance tradeoff?  (Note that this graph shows RMSE and not MSE.)
-
-<img src ="visuals/rsme_poly_2.png" width = "600">
-
-<!---
-fig, ax = plt.subplots(figsize=(7, 7))
-degree = list(range(1, 10 + 1))
-ax.plot(degree, error_train[0:len(degree)], "-", label="Train Error")
-ax.plot(degree, error_test[0:len(degree)], "-", label="Test Error")
-ax.set_yscale("log")
-ax.set_xlabel("Polynomial Feature Degree")
-ax.set_ylabel("Root Mean Squared Error")
-ax.legend()
-ax.set_title("Relationship Between Degree and Error")
-fig.tight_layout()
-fig.savefig("visuals/rsme_poly.png",
-            dpi=150,
-            bbox_inches="tight")
---->
-
-
-```python
-# Your answer here
-```
-
-
-```python
-# __SOLUTION__
-# The optimal number of features in this example is 3 because the testing error 
-# is minimized at this point, and it increases dramatically with a higher degree polynomial. 
-# As we increase the polynomial features, it is going to cause our training error to decrease, 
-# which decreases the bias but increases the variance (the testing error increases). 
-# In other words, the more complex the model, the higher the chance of overfitting.
-```
-
-### 3. In general what methods would you can use to reduce overfitting and underfitting? Provide an example for both and explain how each technique works to reduce the problems of underfitting and overfitting.
-
-
-```python
-# Your answer here
-```
-
-
-```python
-# __SOLUTION__
-# Overfitting: Regularization. With regularization, more complex models are penalized. 
-# This ensures that the models are not trained to too much "noise."
-
-# Underfitting: Feature engineering. By adding additional features, you enable your 
-# machine learning models to gain insights about your data.
-```
-
-### 4. What is the difference between the two types of regularization for linear regression?
-
-
-```python
-# Your answer here
-```
-
-
-```python
-# __SOLUTION__ 
-# L1 or Lasso Regression adds a term to the cost function which reduces some smaller weights down to zero.
-# L2 or Ridge Regression adds a term to the cost function which penalizes weights based on their size,
-# bringing all of them closer to zero.
-```
-
-### 5. Why is scaling input variables a necessary step before regularization?
 
 
 ```python
@@ -651,4 +429,584 @@ y.value_counts()
 
 # Class imbalance could be rectified using oversampling to sample (with replacement) from the minority class until we
 # have equal samples from both classes. 
+```
+
+## Decision Trees [Suggested Time: 15 min]
+
+### Concepts 
+You're given a dataset of **30** elements, 15 of which belong to a positive class (denoted by *`+`* ) and 15 of which do not (denoted by `-`). These elements are described by two attributes, A and B, that can each have either one of two values, true or false. 
+
+The diagrams below show the result of splitting the dataset by attribute: the diagram on the left hand side shows that if we split by Attribute A there are 13 items of the positive class and 2 of the negative class in one branch and 2 of the positive and 13 of the negative in the other branch. The right hand side shows that if we split the data by Attribute B there are 8 items of the positive class and 7 of the negative class in one branch and 7 of the positive and 8 of the negative in the other branch.
+
+<img src="visuals/decision_stump.png">
+
+**1.1) Which one of the two attributes resulted in the best split of the original data? How do you select the best attribute to split a tree at each node?** _(Hint: Mention splitting criteria)_
+
+
+```python
+# Your answer here 
+```
+
+
+```python
+# __SOLUTION__
+# Attribute A generates the best split for the data. 
+# The best attribute to split a tree at each node is selected by considering 
+# the attribute that creates the purest child nodes. Gini impurity and information 
+# gain are two criteria that can be used to measure the quality of a split.
+```
+
+### Decision Trees for Regression 
+
+In this section, you will use decision trees to fit a regression model to the Combined Cycle Power Plant dataset. 
+
+This dataset is from the UCI ML Dataset Repository, and has been included in the `data` folder of this repository as an Excel `.xlsx` file, `Folds5x2_pp.xlsx`. 
+
+The features of this dataset consist of hourly average ambient variables taken from various sensors located around a power plant that record the ambient variables every second.  
+- Temperature (AT) 
+- Ambient Pressure (AP) 
+- Relative Humidity (RH)
+- Exhaust Vacuum (V) 
+
+The target to predict is the net hourly electrical energy output (PE). 
+
+The features and target variables are not normalized.
+
+In the cells below, we import `pandas` and `numpy` for you, and we load the data into a pandas DataFrame. We also include code to inspect the first five rows and get the shape of the DataFrame.
+
+
+```python
+import pandas as pd 
+import numpy as np 
+
+# Load the data
+filename = 'raw_data/Folds5x2_pp.xlsx'
+df = pd.read_excel(filename)
+```
+
+
+```python
+# __SOLUTION__
+import pandas as pd 
+import numpy as np 
+
+# Load the data
+filename = 'raw_data/Folds5x2_pp.xlsx'
+df = pd.read_excel(filename)
+```
+
+
+```python
+# Inspect the first five rows of the dataframe
+df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AT</th>
+      <th>V</th>
+      <th>AP</th>
+      <th>RH</th>
+      <th>PE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>14.96</td>
+      <td>41.76</td>
+      <td>1024.07</td>
+      <td>73.17</td>
+      <td>463.26</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>25.18</td>
+      <td>62.96</td>
+      <td>1020.04</td>
+      <td>59.08</td>
+      <td>444.37</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>5.11</td>
+      <td>39.40</td>
+      <td>1012.16</td>
+      <td>92.14</td>
+      <td>488.56</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>20.86</td>
+      <td>57.32</td>
+      <td>1010.24</td>
+      <td>76.64</td>
+      <td>446.48</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>10.82</td>
+      <td>37.50</td>
+      <td>1009.23</td>
+      <td>96.62</td>
+      <td>473.90</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+# __SOLUTION__
+# Inspect the first five rows of the dataframe
+df.head()
+```
+
+
+```python
+# Get the shape of the dataframe 
+df.shape
+```
+
+
+```python
+# __SOLUTION__
+# Get the shape of the dataframe 
+df.shape
+```
+
+Before fitting any models, you need to create training and testing splits for the data.
+
+Below, we split the data into features and target ('PE') for you. 
+
+
+```python
+X = df[df.columns.difference(['PE'])]
+y = df['PE']
+```
+
+
+```python
+# __SOLUTION__
+X = df[df.columns.difference(['PE'])]
+y = df['PE']
+```
+
+**1.2) Split the data into training and test sets. Create training and test sets with `test_size=0.5` and `random_state=1`.** 
+
+
+```python
+# Your code here. Replace None with appropriate code. 
+
+X_train, X_test, y_train, y_test = None
+```
+
+
+```python
+# __SOLUTION__
+# Include relevant imports 
+from sklearn.model_selection import train_test_split
+
+# Create training and test sets with test_size=0.5 and random_state=1
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=1)
+```
+
+**1.3) Fit a vanilla decision tree regression model with scikit-learn to the training data.** Set `random_state = 1` for reproducibility. **Evaluate the model on the test data.** 
+
+
+```python
+# Your code here 
+```
+
+
+```python
+# __SOLUTION__
+# Bring in necessary imports 
+from sklearn.tree import DecisionTreeRegressor
+
+# Fit the model to the training data 
+dt = DecisionTreeRegressor(random_state=1)
+dt.fit(X_train, y_train)
+
+y_pred = dt.predict(X_test)
+```
+
+**1.4) Obtain the mean squared error, mean absolute error, and coefficient of determination (r2 score) of the predictions on the test set.** _Hint: Look at the `sklearn.metrics` module._
+
+
+```python
+# Your code here. Replace None with appropriate code. 
+
+print("Mean Squared Error:", None)
+print("Mean Absolute Error:", None)
+print("R-squared:", None)
+```
+
+
+```python
+# __SOLUTION__
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+print("Mean Squared Error:", mean_squared_error(y_test, y_pred))
+print("Mean Absolute Error:", mean_absolute_error(y_test, y_pred))
+print("R-squared:", r2_score(y_test, y_pred))
+```
+
+    Mean Squared Error: 22.21041691053512
+    Mean Absolute Error: 3.223405100334449
+    R-squared: 0.9250580726905822
+
+
+Hint: MSE = 22.21041691053512
+
+### Hyperparameter Tuning of Decision Trees for Regression
+
+For this next section feel free to refer to the scikit learn documentation on [decision tree regressors](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
+
+**1.5) Add hyperparameters to a a new decision tree and fit it to our training data and evaluate the model with the test data.**
+
+
+```python
+# Your code here 
+```
+
+
+```python
+# __SOLUTION__ 
+# Evaluate the model on test data 
+dt_tuned = DecisionTreeRegressor(
+    random_state=1,
+    max_depth=3,
+    min_samples_leaf=2,
+)
+dt_tuned.fit(X_train,y_train)
+y_pred_tuned = dt_tuned.predict(X_test)
+```
+
+**1.6) Obtain the mean squared error, mean absolute error, and coefficient of determination (r2 score) of the predictions on the test set. Did this improve your previous model? (It's ok if it didn't)**
+
+
+```python
+# Your answer and explanation here
+```
+
+
+```python
+# __SOLUTION__
+
+# Example: adjusting the max depth changes how many splits can happen on a single branch.
+# Setting this to three helped improve the model and reduced overfitting.
+
+print("Mean Squared Error:", mean_squared_error(y_test, y_pred_tuned))
+print("Mean Absolute Error:", mean_absolute_error(y_test, y_pred_tuned))
+print("R-squared:", r2_score(y_test, y_pred_tuned))
+```
+
+    Mean Squared Error: 26.619897534087755
+    Mean Absolute Error: 4.01892182530331
+    R-squared: 0.9101796947792777
+
+
+## Ensemble Methods [Suggested Time: 15 min]
+
+### Random Forests and Hyperparameter Tuning using GridSearchCV
+
+In this section, you will perform hyperparameter tuning for a Random Forest classifier using GridSearchCV. You will use `scikit-learn`'s wine dataset to classify wines into one of three different classes. 
+
+After finding the best estimator, you will interpret the best model's feature importances. 
+
+In the cells below, we have loaded the relevant imports and the wine data for you. 
+
+
+```python
+# Relevant imports 
+from sklearn.datasets import load_wine
+
+# Load the data 
+wine = load_wine()
+X, y = load_wine(return_X_y=True)
+X = pd.DataFrame(X, columns=wine.feature_names)
+y = pd.Series(y)
+y.name = 'target'
+df = pd.concat([X, y.to_frame()], axis=1)
+```
+
+
+```python
+# __SOLUTION__
+# Relevant imports 
+from sklearn.datasets import load_wine
+
+# Load the data 
+wine = load_wine()
+X, y = load_wine(return_X_y=True)
+X = pd.DataFrame(X, columns=wine.feature_names)
+y = pd.Series(y)
+y.name = 'target'
+df = pd.concat([X, y.to_frame()], axis=1)
+```
+
+In the cells below, we inspect the first five rows of the dataframe and compute the dataframe's shape.
+
+
+```python
+df.head()
+```
+
+
+```python
+# __SOLUTION__
+df.head()
+```
+
+
+```python
+df.shape
+```
+
+
+```python
+# __SOLUTION__
+df.shape
+```
+
+We also get descriptive statistics for the dataset features, and obtain the distribution of classes in the dataset. 
+
+
+```python
+X.describe()
+```
+
+
+```python
+# __SOLUTION__
+X.describe()
+```
+
+
+```python
+y.value_counts().sort_index()
+```
+
+
+```python
+# __SOLUTION__
+y.value_counts().sort_index()
+```
+
+You will now perform hyper-parameter tuning for a Random Forest classifier.
+
+**4.1) Construct a `param_grid` dictionary to pass to `GridSearchCV` when instantiating the object. Choose at least 3 hyper-parameters to tune and 3 values for each.** 
+
+
+```python
+# Replace None with relevant code 
+param_grid = None
+```
+
+
+```python
+# __SOLUTION__
+#this is only an example (student's answers will likely be different)
+param_grid = { 
+    'n_estimators': [5,10,15,20],
+    'max_features': ['auto', 'sqrt', 'log2'],
+    'max_depth' : [4,5,6],
+    'criterion' :['gini', 'entropy']}
+```
+
+Now that you have created the `param_grid` dictionary of hyperparameters, let's continue performing hyperparameter optimization of a Random Forest Classifier. 
+
+In the cell below, we include the relevant imports for you.
+
+
+```python
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+```
+
+
+```python
+# __SOLUTION__
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+```
+
+**4.2) Create an instance of a Random Forest classifier estimator; call it `rfc`.** Make sure to set `random_state=42` for reproducibility. 
+
+
+```python
+# Replace None with appropriate code
+rfc = None
+```
+
+
+```python
+# __SOLUTION__
+rfc = RandomForestClassifier(random_state=42)
+```
+
+**4.3) Create an instance of an `GridSearchCV` object and fit it to the data.** Call the instance `cv_rfc`. 
+
+* Use the random forest classification estimator you instantiated in the cell above, the parameter grid dictionary constructed, and make sure to perform 5-fold cross validation. 
+* The fitting process should take 10 - 15 seconds to complete. 
+
+
+```python
+# Replace None with appropriate code 
+cv_rfc = None 
+
+cv_rfc.fit(None, None)
+```
+
+
+```python
+# __SOLUTION__
+# Create an instance of a `GridSearchCV` object with the appropriate params. 
+cv_rfc = GridSearchCV(estimator=rfc, 
+                      param_grid=param_grid, 
+                      cv = 5)
+
+# Fit it to the data
+cv_rfc.fit(X, y)
+```
+
+**4.4) What are the best training parameters found by GridSearchCV?** 
+
+_Hint: Explore the documentation for GridSearchCV._ 
+
+
+```python
+# Replace None with appropriate code 
+None 
+```
+
+
+```python
+# __SOLUTION__
+cv_rfc.best_params_
+```
+
+In the cell below, we create a variable `best_model` that holds the best model found by the grid search.
+
+
+```python
+best_model = cv_rfc.best_estimator_
+```
+
+
+```python
+# __SOLUTION__
+best_model = cv_rfc.best_estimator_
+```
+
+Next, we give you a function that creates a horizontal bar plot to visualize the feature importances of a model, sorted in descending order. 
+
+
+```python
+import matplotlib.pyplot as plt 
+%matplotlib inline 
+
+def create_plot_of_feature_importances(model, X):
+    ''' 
+    Inputs: 
+    
+    model: A trained ensemble model instance
+    X: a dataframe of the features used to train the model
+    '''
+    
+    feat_importances = model.feature_importances_
+
+    features_and_importances = zip(X.columns, feat_importances)
+    features_and_importances = sorted(features_and_importances, 
+                                     key = lambda x: x[1], reverse=True)
+    
+    features = [i[0] for i in features_and_importances]
+    importances = [i[1] for i in features_and_importances]
+    
+    plt.figure(figsize=(10, 6))
+    plt.barh(features, importances)
+    plt.gca().invert_yaxis()
+    plt.title('Feature Importances')
+    plt.xlabel('importance')
+```
+
+
+```python
+# __SOLUTION__
+import matplotlib.pyplot as plt 
+%matplotlib inline 
+
+def create_plot_of_feature_importances(model, X):
+    ''' 
+    Inputs: 
+    
+    model: A trained ensemble model instance
+    X: a dataframe of the features used to train the model
+    '''
+    
+    feat_importances = model.feature_importances_
+
+    features_and_importances = zip(X.columns, feat_importances)
+    features_and_importances = sorted(features_and_importances, 
+                                     key = lambda x: x[1], reverse=True)
+    
+    features = [i[0] for i in features_and_importances]
+    importances = [i[1] for i in features_and_importances]
+    
+    plt.figure(figsize=(10, 6))
+    plt.barh(features, importances)
+    plt.gca().invert_yaxis()
+    plt.title('Feature Importances')
+    plt.xlabel('importance')
+```
+
+**4.5) Create a plot of the best model's feature importances.** 
+
+_Hint: To create the plot, pass the appropriate parameters to the function above._
+
+
+```python
+# Your code here.
+```
+
+
+```python
+# __SOLUTION__
+create_plot_of_feature_importances(best_model, X)
+```
+
+**4.6) What are this model's top 3 features in order of descending importance?**
+
+
+```python
+# Your answer here 
+```
+
+
+```python
+# __SOLUTION__
+# flavanoids, color_intensity, alcohol
+# Note: this may vary depending how the student tuned the model
 ```
