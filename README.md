@@ -18,7 +18,7 @@ Read the instructions carefully. You will be asked both to write code and respon
 For the short answer questions please use your own words. The expectation is that you have not copied and pasted from an external source, even if you consult another source to help craft your response. While the short answer questions are not necessarily being assessed on grammatical correctness or sentence structure, do your best to communicate yourself clearly.
 
 ---
-## Calculus, Cost Function, and Gradient Descent [Suggested Time: 25 min]
+## Part 1: Calculus, Cost Function, and Gradient Descent [Suggested Time: 25 min]
 ---
 
 ![best fit line](visuals/best_fit_line.png)
@@ -39,7 +39,7 @@ RSS &= \sum_{i=1}^n(actual - expected)^2 \\
 \end{align}
 $$ 
 
-### 1. What is a more generalized name for the RSS curve above? How is it related to machine learning models?
+### 1.1) What is a more generalized name for the RSS curve above? How is it related to machine learning models?
 
 
 ```python
@@ -47,7 +47,7 @@ $$
 # When training machine learning models, the goal is to minimize the cost curve.
 ```
 
-### 2. Would you rather choose a $m$ value of 0.08 or 0.05 from the RSS curve up above?   What is the relation between the position on the cost curve, the error, and the slope of the line?
+### 1.2) Would you rather choose a $m$ value of 0.08 or 0.05 from the RSS curve up above?   What is the relation between the position on the cost curve, the error, and the slope of the line?
 
 
 ```python
@@ -59,7 +59,7 @@ $$
 
 ![](visuals/gd.png)
 
-### 3. Using the gradient descent visual from above, explain why the distance between each step is getting smaller as more steps occur with gradient descent.
+### 1.3) Using the gradient descent visual from above, explain why the distance between each step is getting smaller as more steps occur with gradient descent.
 
 
 ```python
@@ -67,7 +67,7 @@ $$
 # becomes less and less steep as you get closer to finding the minimum.
 ```
 
-### 4. What is the purpose of a learning rate in gradient descent? Explain how a very small and a very large learning rate would affect the gradient descent.
+### 1.4) What is the purpose of a learning rate in gradient descent? Explain how a very small and a very large learning rate would affect the gradient descent.
 
 
 ```python
@@ -77,15 +77,8 @@ $$
 # Learning rate is present in gradient descent to help ensure that an optimal minimum on the cost curve is discovered.
 ```
 
-
-```python
-# Regularization adjusts feature weights depending on their magnitude.
-# Feature weights themselves depend on both the feature importance and the magnitude of the input variable.
-# Therefore, it's important to control for the magnitude of the input variable by scaling all features the same.
-```
-
 ---
-## Introduction to Logistic Regression [Suggested Time: 25 min]
+## Part 2: Introduction to Logistic Regression [Suggested Time: 25 min]
 ---
 
 <!---
@@ -170,7 +163,7 @@ plt.savefig("visuals/cnf_matrix.png",
 
 ![cnf matrix](visuals/cnf_matrix.png)
 
-### 1. Using the confusion matrix up above, calculate precision, recall, and F-1 score.
+### 2.1) Using the confusion matrix up above, calculate precision, recall, and F-1 score.
 
 
 ```python
@@ -183,73 +176,7 @@ print("recall: {}".format(recall))
 print("F1: {}".format(F1))
 ```
 
-### 2.  What is a real life example of when you would care more about recall than precision? Make sure to include information about errors in your explanation.
-
-
-```python
-# We would care more about recall than precision in cases where a Type II error (a False Negative) would 
-# have serious consequences. An example of this would be a medical test that determines if someone has a serious disease.
-# A higher recall would mean that we would have a higher chance of identifying all people who ACTUALLY had the serious disease.
-```
-
-<!---
-# save preprocessed train/test split objects
-X_train = pickle.load(open("write_data/social_network_ads/X_train_scaled.pkl", "rb"))
-X_test = pickle.load(open("write_data/social_network_ads/X_test_scaled.pkl", "rb"))
-y_train = pickle.load(open("write_data/social_network_ads/y_train.pkl", "rb"))
-y_test = pickle.load(open("write_data/social_network_ads/y_test.pkl", "rb"))
-
-# build model
-model = LogisticRegression(C=1e5, solver="lbfgs")
-model.fit(X_train, y_train)
-y_test_pred = model.predict(X_test)
-y_train_pred = model.predict(X_train)
-
-labels = ["Age", "Estimated Salary", "Female", "All Features"]
-colors = sns.color_palette("Set2")
-plt.figure(figsize=(10, 8))
-# add one ROC curve per feature
-for feature in range(3):
-    # female feature is one hot encoded so it produces an ROC point rather than a curve
-    # for this reason, female will not be included in the plot at all since it is
-    # disingeneuous to call it a curve.
-    if feature == 2:
-        pass
-    else:
-        X_train_feat = X_train[:, feature].reshape(-1, 1)
-        X_test_feat = X_test[:, feature].reshape(-1, 1)
-        logreg = LogisticRegression(fit_intercept=False, C=1e12, solver='lbfgs')
-        model_log = logreg.fit(X_train_feat, y_train)
-        y_score = model_log.decision_function(X_test_feat)
-        fpr, tpr, thresholds = roc_curve(y_test, y_score)
-        lw = 2
-        plt.plot(fpr, tpr, color=colors[feature],
-                 lw=lw, label=labels[feature])
-
-# add one ROC curve with all the features
-model_log = logreg.fit(X_train, y_train)
-y_score = model_log.decision_function(X_test)
-fpr, tpr, thresholds = roc_curve(y_test, y_score)
-lw = 2
-plt.plot(fpr, tpr, color=colors[3], lw=lw, label=labels[3])
-
-# create foundation of the plot
-plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
-plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.05])
-plt.yticks([i / 20.0 for i in range(21)])
-plt.xticks([i / 20.0 for i in range(21)])
-plt.xlabel("False positive rate")
-plt.ylabel("True positive rate")
-plt.title("ROC Curve")
-plt.legend()
-plt.tight_layout()
-plt.savefig("visuals/many_roc.png",
-            dpi=150,
-            bbox_inches="tight")
---->
-
-### 3. Pick the best ROC curve from this graph and explain your choice. 
+### 2.2) Pick the best ROC curve from this graph and explain your choice. 
 
 *Note: each ROC curve represents one model, each labeled with the feature(s) inside each model*.
 
@@ -302,7 +229,7 @@ auc = round(roc_auc_score(y_test, y_score), 3)
 print(f"The original classifier has an area under the ROC curve of {auc}.")
 ```
 
-### 4. The model above has an accuracy score that might be too good to believe. Using `y.value_counts()`, explain how `y` is affecting the accuracy score.
+### 2.3) The model above has an accuracy score that might be too good to believe. Using `y.value_counts()`, explain how `y` is affecting the accuracy score.
 
 
 ```python
@@ -316,7 +243,7 @@ y.value_counts()
 # predict one class and is not penalized for doing so, because it is still getting the right answer most of the time. 
 ```
 
-### 5. What methods would you use to address the issues mentioned up above in question 4? 
+### 2.4) What methods would you use to address the issues mentioned up above in question 4? 
 
 
 
@@ -331,7 +258,9 @@ y.value_counts()
 # have equal samples from both classes. 
 ```
 
-## Decision Trees [Suggested Time: 15 min]
+---
+## Part 3: Decision Trees [Suggested Time: 15 min]
+---
 
 ### Concepts 
 You're given a dataset of **30** elements, 15 of which belong to a positive class (denoted by *`+`* ) and 15 of which do not (denoted by `-`). These elements are described by two attributes, A and B, that can each have either one of two values, true or false. 
@@ -340,7 +269,7 @@ The diagrams below show the result of splitting the dataset by attribute: the di
 
 <img src="visuals/decision_stump.png">
 
-**1.1) Which one of the two attributes resulted in the best split of the original data? How do you select the best attribute to split a tree at each node?** _(Hint: Mention splitting criteria)_
+### 3.1) Which one of the two attributes resulted in the best split of the original data? How do you select the best attribute to split a tree at each node? _(Hint: Mention splitting criteria)_
 
 
 ```python
@@ -400,7 +329,7 @@ X = df[df.columns.difference(['PE'])]
 y = df['PE']
 ```
 
-**1.2) Split the data into training and test sets. Create training and test sets with `test_size=0.5` and `random_state=1`.** 
+### 3.2) Split the data into training and test sets. Create training and test sets with `test_size=0.5` and `random_state=1`.
 
 
 ```python
@@ -411,7 +340,7 @@ from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=1)
 ```
 
-**1.3) Fit a vanilla decision tree regression model with scikit-learn to the training data.** Set `random_state = 1` for reproducibility. **Evaluate the model on the test data.** 
+### 3.3) Fit a vanilla decision tree regression model with scikit-learn to the training data.** Set `random_state = 1` for reproducibility. **Evaluate the model on the test data.
 
 
 ```python
@@ -425,7 +354,7 @@ dt.fit(X_train, y_train)
 y_pred = dt.predict(X_test)
 ```
 
-**1.4) Obtain the mean squared error, mean absolute error, and coefficient of determination (r2 score) of the predictions on the test set.** _Hint: Look at the `sklearn.metrics` module._
+### 3.4) Obtain the mean squared error, mean absolute error, and coefficient of determination (r2 score) of the predictions on the test set. _Hint: Look at the `sklearn.metrics` module._
 
 
 ```python
@@ -447,7 +376,7 @@ Hint: MSE = 22.21041691053512
 
 For this next section feel free to refer to the scikit learn documentation on [decision tree regressors](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
 
-**1.5) Add hyperparameters to a a new decision tree and fit it to our training data and evaluate the model with the test data.**
+### 3.5) Add hyperparameters to a a new decision tree and fit it to our training data and evaluate the model with the test data.
 
 
 ```python
@@ -461,7 +390,7 @@ dt_tuned.fit(X_train,y_train)
 y_pred_tuned = dt_tuned.predict(X_test)
 ```
 
-**1.6) Obtain the mean squared error, mean absolute error, and coefficient of determination (r2 score) of the predictions on the test set. Did this improve your previous model? (It's ok if it didn't)**
+### 3.6) Obtain the mean squared error, mean absolute error, and coefficient of determination (r2 score) of the predictions on the test set. Did this improve your previous model? (It's ok if it didn't)
 
 
 ```python
@@ -479,7 +408,9 @@ print("R-squared:", r2_score(y_test, y_pred_tuned))
     R-squared: 0.9101796947792777
 
 
-## Ensemble Methods [Suggested Time: 15 min]
+---
+## Part 4: Ensemble Methods [Suggested Time: 15 min]
+---
 
 ### Random Forests and Hyperparameter Tuning using GridSearchCV
 
@@ -529,7 +460,7 @@ y.value_counts().sort_index()
 
 You will now perform hyper-parameter tuning for a Random Forest classifier.
 
-**4.1) Construct a `param_grid` dictionary to pass to `GridSearchCV` when instantiating the object. Choose at least 3 hyper-parameters to tune and 3 values for each.** 
+### 4.1) Construct a `param_grid` dictionary to pass to `GridSearchCV` when instantiating the object. Choose at least 3 hyper-parameters to tune and 3 values for each.
 
 
 ```python
@@ -551,14 +482,14 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 ```
 
-**4.2) Create an instance of a Random Forest classifier estimator; call it `rfc`.** Make sure to set `random_state=42` for reproducibility. 
+### 4.2) Create an instance of a Random Forest classifier estimator; call it `rfc`. Make sure to set `random_state=42` for reproducibility. 
 
 
 ```python
 rfc = RandomForestClassifier(random_state=42)
 ```
 
-**4.3) Create an instance of an `GridSearchCV` object and fit it to the data.** Call the instance `cv_rfc`. 
+### 4.3) Create an instance of an `GridSearchCV` object and fit it to the data. Call the instance `cv_rfc`. 
 
 * Use the random forest classification estimator you instantiated in the cell above, the parameter grid dictionary constructed, and make sure to perform 5-fold cross validation. 
 * The fitting process should take 10 - 15 seconds to complete. 
@@ -574,7 +505,7 @@ cv_rfc = GridSearchCV(estimator=rfc,
 cv_rfc.fit(X, y)
 ```
 
-**4.4) What are the best training parameters found by GridSearchCV?** 
+### 4.4) What are the best training parameters found by GridSearchCV?
 
 _Hint: Explore the documentation for GridSearchCV._ 
 
@@ -621,19 +552,11 @@ def create_plot_of_feature_importances(model, X):
     plt.xlabel('importance')
 ```
 
-**4.5) Create a plot of the best model's feature importances.** 
+### 4.5) Create a plot of the best model's feature importances.
 
 _Hint: To create the plot, pass the appropriate parameters to the function above._
 
 
 ```python
 create_plot_of_feature_importances(best_model, X)
-```
-
-**4.6) What are this model's top 3 features in order of descending importance?**
-
-
-```python
-# flavanoids, color_intensity, alcohol
-# Note: this may vary depending how the student tuned the model
 ```
